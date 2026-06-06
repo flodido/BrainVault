@@ -7,3 +7,4 @@
 .stfolder/
 **/.trash/
 **/Thumbs.db
+.mcp.json

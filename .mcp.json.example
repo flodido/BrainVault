@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "slack": {
+      "command": "/opt/homebrew/bin/node",
+      "args": ["/opt/homebrew/lib/node_modules/@modelcontextprotocol/server-slack/dist/index.js"],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb-XXXXX-XXXXX-XXXXX",
+        "SLACK_TEAM_ID": "TXXXXXXXXX"
+      }
+    }
+  }
+}
