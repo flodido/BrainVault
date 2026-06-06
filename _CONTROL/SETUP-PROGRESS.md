@@ -7,7 +7,8 @@
 
 ## Offen
 - [x] Syncthing als System-Daemon einrichten (via Tailscale: http://100.81.198.77:8384)
-- [ ] Syncthing auf iPhone, iPad, MacBook installieren
+- [x] Syncthing auf iPhone installieren und BrainVault Vault einrichten
+- [ ] Syncthing auf iPad und MacBook Air installieren
 - [ ] Slack Bot erstellen und MCP konfigurieren
 - [ ] Dispatcher Session starten und testen
 - [ ] Komplettes Setup-Script bauen:
