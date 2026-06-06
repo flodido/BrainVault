@@ -6,7 +6,7 @@
 - [x] GitHub Repo erstellt und gepusht
 
 ## Offen
-- [ ] Syncthing als System-Daemon einrichten
+- [x] Syncthing als System-Daemon einrichten (via Tailscale: http://100.81.198.77:8384)
 - [ ] Syncthing auf iPhone, iPad, MacBook installieren
 - [ ] Slack Bot erstellen und MCP konfigurieren
 - [ ] Dispatcher Session starten und testen
