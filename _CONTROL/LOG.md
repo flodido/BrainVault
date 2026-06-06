@@ -8,4 +8,3 @@
 ## Einträge
 
 <!-- Sessions schreiben hier mit: echo "[$(date '+%Y-%m-%d %H:%M')] [SESSION-X] Nachricht" >> LOG.md -->
-

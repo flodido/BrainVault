@@ -8,3 +8,14 @@
 **/.trash/
 **/Thumbs.db
 .mcp.json
+
+# Persönliche Inhalte — nicht im öffentlichen Framework
+Research/
+Data/
+_ARCHIVE/
+_INBOX/
+BrainVault/
+Neuer Link.md
+
+# Logs und Run-Protokolle — nur leeres Template tracken
+_CONTROL/DISPATCHER-RUN.log
