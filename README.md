@@ -68,7 +68,8 @@ BrainVault/
 | `#brain-fragen` | Sessions fragen dich bei Unklarheiten |
 | `#brain-status` | Dispatcher → Sessions: Aufgaben-Zuweisung |
 | `#brain-fertig` | Sessions → Du: Ergebnisse fertig |
-| `#dispatcher` | Dispatcher und Email Assistant: direkte Freigaben/Threads |
+| `#dispatcher` | Dispatcher-Steuerung |
+| `#email-assistant` | Private Freigaben und Verfeinerungen für E-Mail-Entwürfe |
 
 ---
 
@@ -93,7 +94,7 @@ Kurze implizite Anweisungen oberhalb der weitergeleiteten Nachricht werden ebenf
 
 ### Slack-Freigabe
 
-Der Assistant postet den Entwurf als Thread in `#dispatcher`. Florian reagiert dort mit Emoji-Aktionen:
+Der Assistant postet den Entwurf als Thread in `#email-assistant`. Florian reagiert dort mit Emoji-Aktionen:
 
 ```text
 ✅ senden

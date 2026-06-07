@@ -1,6 +1,6 @@
 # BrainVault Email Assistant
 
-Der Email Assistant verarbeitet weitergeleitete Gmail-Nachrichten, erstellt Antwortentwürfe mit Claude und holt die Freigabe in Slack ein.
+Der Email Assistant verarbeitet weitergeleitete Gmail-Nachrichten, erstellt Antwortentwürfe mit Claude und holt die Freigabe in Slack im privaten Kanal `#email-assistant` ein.
 
 ## Ablauf
 

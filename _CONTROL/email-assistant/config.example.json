@@ -1,6 +1,6 @@
 {
   "vault_path": "/Users/florianmillion/GIT/BrainVault",
-  "slack_channel_id": "C0B9L30KVR6",
+  "slack_channel_id": "C0B9PC2K7GQ",
   "slack_allowed_user_id": "U0B8VCCEB9A",
   "slack_bot_token_env": "SLACK_BOT_TOKEN",
   "claude_command": "/Users/florianmillion/.local/bin/claude",
