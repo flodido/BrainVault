@@ -170,6 +170,24 @@ def slack_replies(token: str, channel: str, thread_ts: str) -> list[dict[str, An
     return result.get("messages", [])
 
 
+def slack_reaction_command(message: dict[str, Any], allowed_user: str) -> str | None:
+    reaction_commands = {
+        "white_check_mark": "senden",
+        "heavy_check_mark": "senden",
+        "outbox_tray": "senden",
+        "memo": "entwurf",
+        "pencil": "entwurf",
+        "x": "ablehnen",
+        "no_entry_sign": "ablehnen",
+    }
+    for reaction in message.get("reactions", []):
+        name = reaction.get("name")
+        users = reaction.get("users", [])
+        if name in reaction_commands and allowed_user in users:
+            return reaction_commands[name]
+    return None
+
+
 def slack_post(token: str, channel: str, text: str, thread_ts: str | None = None) -> str:
     payload: dict[str, Any] = {"channel": channel, "text": text}
     if thread_ts:
@@ -529,7 +547,8 @@ def post_new_mail_to_slack(token: str, config: dict[str, Any], mail: ForwardedMa
         f"*Empfänger:* {recipient or mail.original_from or 'unklar'}\n"
         f"*Betreff:* {ensure_reply_subject(mail.original_subject)}\n\n"
         f"*Vorschlag:*\n```{draft}```\n\n"
-        f"Antworte im Thread mit `senden`, `entwurf`, `ablehnen` oder einer Verfeinerung."
+        f"Reagiere mit :white_check_mark: zum Senden, :memo: für Gmail-Entwurf, :x: zum Ablehnen. "
+        f"Für Verfeinerungen antworte im Thread."
     )
     return slack_post(token, config["slack_channel_id"], text)
 
@@ -592,6 +611,12 @@ def process_slack_approvals(service: Any, token: str, config: dict[str, Any], st
         if not thread_ts:
             continue
         messages = slack_replies(token, channel, thread_ts)
+        if messages:
+            command = slack_reaction_command(messages[0], allowed_user)
+            if command:
+                record["last_reply_ts"] = max(record.get("last_reply_ts") or thread_ts, thread_ts)
+                handle_slack_reply(service, token, config, message_id, record, command, thread_ts)
+                continue
         last_seen = float(record.get("last_reply_ts") or thread_ts)
         user_replies = [
             msg
@@ -671,7 +696,7 @@ def handle_slack_reply(
         slack_post(
             token,
             config["slack_channel_id"],
-            f"Neue Version:\n```{new_draft}```\n\nAntworte mit `senden`, `entwurf`, `ablehnen` oder einer weiteren Verfeinerung.",
+            f"Neue Version:\n```{new_draft}```\n\nReagiere mit :white_check_mark: zum Senden, :memo: für Gmail-Entwurf, :x: zum Ablehnen. Für weitere Änderungen antworte im Thread.",
             thread_ts,
         )
         log(f"Refined draft for Gmail message {message_id}.")

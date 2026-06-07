@@ -93,7 +93,15 @@ Kurze implizite Anweisungen oberhalb der weitergeleiteten Nachricht werden ebenf
 
 ### Slack-Freigabe
 
-Der Assistant postet den Entwurf als Thread in `#dispatcher`. Florian antwortet dort mit:
+Der Assistant postet den Entwurf als Thread in `#dispatcher`. Florian reagiert dort mit Emoji-Aktionen:
+
+```text
+✅ senden
+📝 Gmail-Entwurf erstellen
+❌ ablehnen
+```
+
+Alternativ antwortet Florian im Thread mit:
 
 ```text
 senden
