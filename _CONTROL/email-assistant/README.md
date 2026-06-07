@@ -1,0 +1,72 @@
+# BrainVault Email Assistant
+
+Der Email Assistant verarbeitet weitergeleitete Gmail-Nachrichten, erstellt Antwortentwürfe mit Claude und holt die Freigabe in Slack ein.
+
+## Ablauf
+
+1. Florian leitet eine Mail an die Gmail-Adresse des Assistenten weiter.
+2. Ganz oben steht ein privater Anweisungsblock:
+
+```text
+### ANWEISUNG AN ASSISTENZ
+Ziel: Freundlich absagen, aber Kontakt offenhalten.
+Stil: Florian Standard, kurz und warm.
+Modus: Freigabe in Slack.
+### ENDE ANWEISUNG
+```
+
+3. Der Assistant trennt diesen Block vom Mailinhalt.
+4. Claude erstellt eine Antwort ohne den privaten Anweisungsblock zu zitieren.
+5. Der Entwurf erscheint in einem Slack-Thread.
+6. Florian antwortet im Thread mit:
+
+```text
+senden
+```
+
+oder mit einer Verfeinerung, zum Beispiel:
+
+```text
+Kürzer. Kein "leider". Schlag Ende Juni vor.
+```
+
+Weitere Befehle:
+
+```text
+entwurf
+ablehnen
+```
+
+## Installation
+
+```bash
+cd ~/BrainVault/_CONTROL/email-assistant
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.txt
+cp config.example.json config.json
+```
+
+Dann `config.json` anpassen.
+
+## Gmail OAuth
+
+1. In Google Cloud ein OAuth Desktop-App Credential für die Assistenten-Gmail erstellen.
+2. Die Datei als `credentials.json` in diesen Ordner legen.
+3. Beim ersten Lauf öffnet Google den OAuth-Flow:
+
+```bash
+python email_assistant.py --once
+```
+
+Der lokale Token wird als `token.json` gespeichert und ist per `.gitignore` ausgeschlossen.
+
+## LaunchAgent
+
+Nach erfolgreichem Test:
+
+```bash
+./install-launchagent.sh
+```
+
+Der Agent läuft danach alle 2 Minuten.

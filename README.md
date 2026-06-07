@@ -17,6 +17,7 @@ Morgens beim Kaffee sind alle Aufgaben erledigt und die Ergebnisse warten in Obs
 ```
 Du (iPhone / Apple Watch)
 ├── Slack → Ideen einwerfen, Benachrichtigungen
+├── Gmail → weitergeleitete E-Mails an den Assistant
 ├── Claude App → Sessions steuern via Remote Control
 └── Obsidian → Ergebnisse lesen
         ↓
@@ -24,6 +25,7 @@ Tailscale VPN (sicherer Tunnel)
         ↓
 Mac mini
 ├── Dispatcher Session → koordiniert alle Aufgaben
+├── Email Assistant → Gmail lesen, Entwurf bauen, Slack-Freigabe einholen
 ├── Session A & B → Recherche / Web-Suche
 ├── Session C & D → Daten verarbeiten
 └── Session E → Texte zusammenfassen
@@ -66,6 +68,46 @@ BrainVault/
 | `#brain-fragen` | Sessions fragen dich bei Unklarheiten |
 | `#brain-status` | Dispatcher → Sessions: Aufgaben-Zuweisung |
 | `#brain-fertig` | Sessions → Du: Ergebnisse fertig |
+| `#dispatcher` | Dispatcher und Email Assistant: direkte Freigaben/Threads |
+
+---
+
+## Email Assistant
+
+Weitergeleitete E-Mails werden nicht automatisch beantwortet. Der Assistant trennt private Instruktionen von der Originalmail, erstellt mit Claude einen Antwortvorschlag und fragt in Slack nach Freigabe.
+
+### Weiterleitungsformat
+
+```text
+### ANWEISUNG AN ASSISTENZ
+Ziel: Freundlich absagen, aber Kontakt offenhalten.
+Stil: Florian Standard, kurz und warm.
+Modus: Freigabe in Slack.
+### ENDE ANWEISUNG
+
+[weitergeleitete Originalmail]
+```
+
+Alles im Anweisungsblock ist privater Steuerkontext und darf niemals in der Antwort auftauchen.
+
+### Slack-Freigabe
+
+Der Assistant postet den Entwurf als Thread in `#dispatcher`. Florian antwortet dort mit:
+
+```text
+senden
+```
+
+oder:
+
+```text
+entwurf
+ablehnen
+```
+
+Jede andere Thread-Antwort wird als Verfeinerung verstanden, z.B. `Kürzer und etwas wärmer`.
+
+Setup und Code liegen unter `_CONTROL/email-assistant/`.
 
 ---
 
@@ -78,6 +120,7 @@ BrainVault/
 | Tailscale | Sicherer Remote-Zugriff |
 | Syncthing | Vault-Sync auf alle Geräte |
 | Slack | Kommunikation zwischen dir und Sessions |
+| Gmail API | Eingang, Entwürfe und Versand für den Email Assistant |
 | Obsidian | Vault lesen auf allen Geräten |
 
 ---

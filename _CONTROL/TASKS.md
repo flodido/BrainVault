@@ -9,6 +9,7 @@
 <!-- Hier wirfst du neue Ideen rein. Format: "- [ ] Deine Idee" -->
 
 - [ ] Beispiel-Task: Recherchiere aktuelle KI-Tools für Obsidian
+- [ ] Email Assistant final einrichten: Gmail OAuth Credential erstellen, config.json anpassen, Testmail weiterleiten, Slack-Freigabe testen, LaunchAgent aktivieren
 
 ---
 
