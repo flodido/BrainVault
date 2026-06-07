@@ -588,6 +588,7 @@ def process_new_gmail(service: Any, token: str, config: dict[str, Any], state: d
             processed[message_id] = {
                 "status": "pending",
                 "slack_ts": slack_ts,
+                "slack_channel_id": config["slack_channel_id"],
                 "last_reply_ts": slack_ts,
                 "draft": draft,
                 "recipient": extract_email_address(mail.original_from),
@@ -603,14 +604,20 @@ def process_new_gmail(service: Any, token: str, config: dict[str, Any], state: d
 
 def process_slack_approvals(service: Any, token: str, config: dict[str, Any], state: dict[str, Any]) -> None:
     allowed_user = config["slack_allowed_user_id"]
-    channel = config["slack_channel_id"]
     for message_id, record in list(state.get("messages", {}).items()):
         if record.get("status") != "pending":
             continue
         thread_ts = record.get("slack_ts")
+        channel = record.get("slack_channel_id") or config["slack_channel_id"]
         if not thread_ts:
             continue
-        messages = slack_replies(token, channel, thread_ts)
+        try:
+            messages = slack_replies(token, channel, thread_ts)
+        except RuntimeError as exc:
+            if "thread_not_found" in str(exc):
+                log(f"Slack thread not found for Gmail message {message_id} in channel {channel}. Skipping approval check.")
+                continue
+            raise
         if messages:
             command = slack_reaction_command(messages[0], allowed_user)
             if command:
