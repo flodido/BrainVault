@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import fcntl
 import html
 import json
 import os
@@ -16,6 +17,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+from contextlib import contextmanager
 from email import policy
 from email.message import EmailMessage, Message
 from email.parser import BytesParser
@@ -28,6 +30,7 @@ ROOT = Path(__file__).resolve().parent
 CONFIG_PATH = ROOT / "config.json"
 STATE_PATH = ROOT / "state.json"
 LOG_PATH = ROOT / "email-assistant.log"
+LOCK_PATH = ROOT / "email-assistant.lock"
 
 INSTRUCTION_RE = re.compile(
     r"###\s*ANWEISUNG\s+AN\s+ASSISTENZ\s*(.*?)\s*###\s*ENDE\s+ANWEISUNG",
@@ -78,6 +81,28 @@ def save_json(path: Path, value: Any) -> None:
         json.dump(value, f, indent=2, ensure_ascii=False)
         f.write("\n")
     tmp.replace(path)
+
+
+@contextmanager
+def single_instance() -> Any:
+    lock_file = LOCK_PATH.open("w", encoding="utf-8")
+    try:
+        try:
+            fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            log("Another Email Assistant run is already active. Skipping this cycle.")
+            yield False
+            return
+        lock_file.seek(0)
+        lock_file.truncate()
+        lock_file.write(str(os.getpid()))
+        lock_file.flush()
+        yield True
+    finally:
+        try:
+            fcntl.flock(lock_file, fcntl.LOCK_UN)
+        finally:
+            lock_file.close()
 
 
 def load_config() -> dict[str, Any]:
@@ -606,14 +631,17 @@ def handle_slack_reply(
 
 
 def run_once() -> None:
-    config = load_config()
-    state = load_json(STATE_PATH, {"messages": {}})
-    token = get_slack_token(config)
-    service = gmail_service()
+    with single_instance() as acquired:
+        if not acquired:
+            return
+        config = load_config()
+        state = load_json(STATE_PATH, {"messages": {}})
+        token = get_slack_token(config)
+        service = gmail_service()
 
-    process_new_gmail(service, token, config, state)
-    process_slack_approvals(service, token, config, state)
-    save_json(STATE_PATH, state)
+        process_new_gmail(service, token, config, state)
+        process_slack_approvals(service, token, config, state)
+        save_json(STATE_PATH, state)
 
 
 def main() -> None:

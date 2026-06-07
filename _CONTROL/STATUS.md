@@ -9,7 +9,7 @@
 | Session | Rolle | Zustand | Aktueller Task | Letzte Aktivität |
 |---------|-------|---------|----------------|------------------|
 | DISPATCHER | Koordination | 🟢 Aktiv | Eingang überwachen | — |
-| EMAIL-ASSISTANT | Gmail / Slack Freigabe | ⚪ Bereit | OAuth + LaunchAgent offen | 2026-06-07 |
+| EMAIL-ASSISTANT | Gmail / Slack Freigabe | 🟢 Aktiv | Gmail pollen + Slack-Freigaben prüfen | 2026-06-07 |
 | SESSION-A | Recherche / Web | ⚪ Bereit | — | — |
 | SESSION-B | Recherche / Web | ⚪ Bereit | — | — |
 | SESSION-C | Daten verarbeiten | ⚪ Bereit | — | — |

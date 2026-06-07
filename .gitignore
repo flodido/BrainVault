@@ -26,6 +26,7 @@ _CONTROL/email-assistant/credentials.json
 _CONTROL/email-assistant/token.json
 _CONTROL/email-assistant/state.json
 _CONTROL/email-assistant/*.log
+_CONTROL/email-assistant/*.lock
 _CONTROL/email-assistant/.venv/
 __pycache__/
 *.pyc
