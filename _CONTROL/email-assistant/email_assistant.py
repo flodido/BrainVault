@@ -60,6 +60,7 @@ class ForwardedMail:
     original_subject: str
     original_date: str
     original_body: str
+    instruction_source: str = "explicit"
 
 
 def log(message: str) -> None:
@@ -307,8 +308,18 @@ def parse_forwarded_mail(message_id: str, msg: Message, meta: dict[str, Any], co
     text = extract_text(msg)
     instruction_match = INSTRUCTION_RE.search(text)
     has_instruction_block = instruction_match is not None
-    instructions = instruction_match.group(1).strip() if instruction_match else default_missing_instruction(config)
     public_text = INSTRUCTION_RE.sub("", text).strip()
+    if instruction_match:
+        instructions = instruction_match.group(1).strip()
+        instruction_source = "explicit"
+    else:
+        implicit = implicit_instruction_text(public_text)
+        if implicit:
+            instructions = implicit
+            instruction_source = "implicit"
+        else:
+            instructions = default_missing_instruction(config)
+            instruction_source = "missing"
 
     forward_from = str(msg.get("From", ""))
     forward_subject = str(msg.get("Subject", ""))
@@ -339,6 +350,7 @@ def parse_forwarded_mail(message_id: str, msg: Message, meta: dict[str, Any], co
         original_subject=original_subject.strip(),
         original_date=original_date.strip(),
         original_body=original_body.strip(),
+        instruction_source=instruction_source,
     )
 
 
@@ -347,6 +359,19 @@ def default_missing_instruction(config: dict[str, Any]) -> str:
         f"Kein expliziter Anweisungsblock gefunden. Erstelle nur einen vorsichtigen Entwurf. "
         f"Standardstil: {config.get('style_profile', '')}. Modus: {config.get('default_mode', 'Freigabe in Slack')}."
     )
+
+
+def implicit_instruction_text(text: str) -> str:
+    if not text.strip():
+        return ""
+    match = FORWARD_MARKER_RE.search(text)
+    if match:
+        return text[: match.start()].strip()
+    # RFC822-forward clients often put the original mail in an attachment and
+    # leave only Florian's instruction text in the wrapper body.
+    if not any(pattern.search(text) for pattern in HEADER_PATTERNS.values()):
+        return text.strip()
+    return ""
 
 
 def forwarded_body_chunk(text: str) -> str:
@@ -491,7 +516,9 @@ def ensure_signature(draft: str, signature: str) -> str:
 def post_new_mail_to_slack(token: str, config: dict[str, Any], mail: ForwardedMail, draft: str) -> str:
     recipient = extract_email_address(mail.original_from)
     status = "Freigabe benötigt"
-    if not mail.has_instruction_block:
+    if mail.instruction_source == "implicit":
+        status = "Implizite Anweisung erkannt"
+    elif mail.instruction_source == "missing":
         status = "Anweisungsblock fehlt, vorsichtiger Entwurf"
     if not recipient:
         status = "Empfänger unklar, bitte im Thread klären"

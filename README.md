@@ -89,6 +89,7 @@ Modus: Freigabe in Slack.
 ```
 
 Alles im Anweisungsblock ist privater Steuerkontext und darf niemals in der Antwort auftauchen.
+Kurze implizite Anweisungen oberhalb der weitergeleiteten Nachricht werden ebenfalls als privater Steuerkontext erkannt; der explizite Block ist aber robuster.
 
 ### Slack-Freigabe
 

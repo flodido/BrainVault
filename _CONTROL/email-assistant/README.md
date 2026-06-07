@@ -15,7 +15,16 @@ Modus: Freigabe in Slack.
 ### ENDE ANWEISUNG
 ```
 
-3. Der Assistant trennt diesen Block vom Mailinhalt.
+Alternativ kann Florian eine kurze implizite Anweisung oberhalb der Weiterleitung schreiben. Der explizite Block bleibt aber die robusteste Form.
+
+```text
+Bitte freundlich zusagen, aber sagen, dass ich die genaue Uhrzeit nochmal bestätige.
+
+---------- Forwarded message ---------
+...
+```
+
+3. Der Assistant trennt diese Anweisung vom Mailinhalt.
 4. Der Assistant prüft, ob die Weiterleitung von einer erlaubten Florian-Adresse kommt.
 5. Claude erstellt eine Antwort ohne den privaten Anweisungsblock zu zitieren.
 6. Der Entwurf erscheint in einem Slack-Thread.
