@@ -5,6 +5,12 @@
   "slack_bot_token_env": "SLACK_BOT_TOKEN",
   "claude_command": "/Users/florianmillion/.local/bin/claude",
   "gmail_query": "in:inbox is:unread -from:me",
+  "allowed_forwarders": [
+    "florian.million@gmail.com",
+    "f.million@it-beratung-million.de",
+    "monacobuy@gmail.com"
+  ],
+  "mark_unauthorized_read": true,
   "assistant_signature": "KI-Assistenz von Florian Million\nim Auftrag von Florian Million",
   "style_profile": "Florian Standard: direkt, freundlich, kurz, professionell, keine übertriebene Förmlichkeit, keine erfundenen Zusagen, klare nächste Schritte.",
   "default_mode": "Freigabe in Slack",

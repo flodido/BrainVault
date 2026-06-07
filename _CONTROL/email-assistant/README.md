@@ -16,9 +16,10 @@ Modus: Freigabe in Slack.
 ```
 
 3. Der Assistant trennt diesen Block vom Mailinhalt.
-4. Claude erstellt eine Antwort ohne den privaten Anweisungsblock zu zitieren.
-5. Der Entwurf erscheint in einem Slack-Thread.
-6. Florian antwortet im Thread mit:
+4. Der Assistant prüft, ob die Weiterleitung von einer erlaubten Florian-Adresse kommt.
+5. Claude erstellt eine Antwort ohne den privaten Anweisungsblock zu zitieren.
+6. Der Entwurf erscheint in einem Slack-Thread.
+7. Florian antwortet im Thread mit:
 
 ```text
 senden
@@ -36,6 +37,20 @@ Weitere Befehle:
 entwurf
 ablehnen
 ```
+
+## Erlaubte Absender
+
+Der Assistant verarbeitet nur weitergeleitete Mails von den Adressen in `allowed_forwarders`:
+
+```json
+[
+  "florian.million@gmail.com",
+  "f.million@it-beratung-million.de",
+  "monacobuy@gmail.com"
+]
+```
+
+Andere Absender werden als `skipped_unauthorized` protokolliert und standardmäßig als gelesen markiert.
 
 ## Installation
 

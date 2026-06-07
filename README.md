@@ -74,7 +74,7 @@ BrainVault/
 
 ## Email Assistant
 
-Weitergeleitete E-Mails werden nicht automatisch beantwortet. Der Assistant trennt private Instruktionen von der Originalmail, erstellt mit Claude einen Antwortvorschlag und fragt in Slack nach Freigabe.
+Weitergeleitete E-Mails werden nicht automatisch beantwortet. Der Assistant verarbeitet nur Mails von erlaubten Florian-Absenderadressen, trennt private Instruktionen von der Originalmail, erstellt mit Claude einen Antwortvorschlag und fragt in Slack nach Freigabe.
 
 ### Weiterleitungsformat
 

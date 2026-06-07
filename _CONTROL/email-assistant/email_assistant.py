@@ -382,6 +382,14 @@ def extract_email_address(value: str) -> str:
     return addr if "@" in addr else ""
 
 
+def is_allowed_forwarder(config: dict[str, Any], forward_from: str) -> bool:
+    allowed = [addr.lower() for addr in config.get("allowed_forwarders", []) if addr]
+    if not allowed:
+        return True
+    sender = extract_email_address(forward_from).lower()
+    return sender in allowed
+
+
 def strip_forward_prefix(subject: str) -> str:
     subject = subject.strip()
     while True:
@@ -517,6 +525,18 @@ def process_new_gmail(service: Any, token: str, config: dict[str, Any], state: d
         try:
             msg, meta = gmail_raw_message(service, message_id)
             mail = parse_forwarded_mail(message_id, msg, meta, config)
+            if not is_allowed_forwarder(config, mail.forward_from):
+                sender = extract_email_address(mail.forward_from) or mail.forward_from or "unknown"
+                processed[message_id] = {
+                    "status": "skipped_unauthorized",
+                    "sender": sender,
+                    "subject": mail.forward_subject,
+                    "created_at": time.time(),
+                }
+                if config.get("mark_unauthorized_read", True):
+                    gmail_mark_read(service, message_id)
+                log(f"Skipped unauthorized Gmail message {message_id} from {sender}.")
+                continue
             draft = claude_draft(config, mail)
             slack_ts = post_new_mail_to_slack(token, config, mail, draft)
             processed[message_id] = {
