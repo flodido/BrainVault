@@ -152,11 +152,10 @@ def slack_post(token: str, channel: str, text: str, thread_ts: str | None = None
     return result["ts"]
 
 
-def gmail_service() -> Any:
+def ensure_gmail_credentials(open_browser: bool = True, auth_port: int = 0) -> Any:
     from google.auth.transport.requests import Request
     from google.oauth2.credentials import Credentials
     from google_auth_oauthlib.flow import InstalledAppFlow
-    from googleapiclient.discovery import build
 
     scopes = [
         "https://www.googleapis.com/auth/gmail.modify",
@@ -175,8 +174,15 @@ def gmail_service() -> Any:
         if not credentials_path.exists():
             raise SystemExit(f"Missing Gmail OAuth credentials: {credentials_path}")
         flow = InstalledAppFlow.from_client_secrets_file(str(credentials_path), scopes)
-        creds = flow.run_local_server(port=0)
+        creds = flow.run_local_server(port=auth_port, open_browser=open_browser)
     token_path.write_text(creds.to_json(), encoding="utf-8")
+    return creds
+
+
+def gmail_service() -> Any:
+    from googleapiclient.discovery import build
+
+    creds = ensure_gmail_credentials()
     return build("gmail", "v1", credentials=creds)
 
 
@@ -613,7 +619,15 @@ def run_once() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="BrainVault Gmail-to-Slack email assistant")
     parser.add_argument("--once", action="store_true", help="Run one polling cycle")
+    parser.add_argument("--auth-only", action="store_true", help="Only authorize Gmail and write token.json")
+    parser.add_argument("--no-browser", action="store_true", help="Print the OAuth URL instead of opening a browser")
+    parser.add_argument("--auth-port", type=int, default=0, help="Local OAuth callback port, useful with SSH tunnels")
     args = parser.parse_args()
+
+    if args.auth_only:
+        ensure_gmail_credentials(open_browser=not args.no_browser, auth_port=args.auth_port)
+        print(f"Gmail OAuth token written to {ROOT / 'token.json'}")
+        return
 
     if args.once:
         run_once()
