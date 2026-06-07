@@ -65,6 +65,47 @@ if [ -f "$STOP_FILE" ]; then
     exit 0
 fi
 
+# Nur Claude starten, wenn in der bereits geholten History eine offene
+# Hauptkanal-Nachricht von Florian ohne erledigt-Reaktion vorhanden ist.
+HAS_UNPROCESSED=$(echo "$RECENT" | python3 -c "
+import sys, json
+
+USER_ID = '$USER_ID'
+
+try:
+    d = json.load(sys.stdin)
+except Exception:
+    sys.exit(2)
+
+if not d.get('ok', False):
+    sys.exit(2)
+
+for m in d.get('messages', []):
+    text = m.get('text', '').strip()
+    reactions = m.get('reactions', [])
+    reaction_names = {r.get('name') for r in reactions}
+
+    is_from_user = m.get('user') == USER_ID
+    is_bot = 'bot_id' in m
+    is_command = text.startswith('!')
+    is_done = 'white_check_mark' in reaction_names or 'heavy_check_mark' in reaction_names
+
+    if is_from_user and not is_bot and not is_command and not is_done:
+        sys.exit(0)
+
+sys.exit(1)
+" 2>/dev/null; echo $?)
+
+if [ "$HAS_UNPROCESSED" = "2" ]; then
+    log "Slack-History konnte nicht lokal geprüft werden. Überspringe Claude."
+    exit 0
+fi
+
+if [ "$HAS_UNPROCESSED" != "0" ]; then
+    log "Keine unverarbeitete Hauptkanal-Nachricht. Überspringe Claude."
+    exit 0
+fi
+
 # Dispatcher ausführen
 log "Starte Dispatcher-Runde..."
 "$CLAUDE" --print \
