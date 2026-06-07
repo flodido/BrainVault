@@ -6,6 +6,7 @@
 VAULT="$HOME/BrainVault"
 CONTROL="$VAULT/_CONTROL"
 STOP_FILE="$CONTROL/DISPATCHER-STOP"
+LAST_SEEN_FILE="$CONTROL/DISPATCHER-LAST-SEEN-MAIN-TS"
 CLAUDE="$HOME/.local/bin/claude"
 CHANNEL="C0B9L30KVR6"
 USER_ID="U0B8VCCEB9A"
@@ -65,49 +66,92 @@ if [ -f "$STOP_FILE" ]; then
     exit 0
 fi
 
-# Nur Claude starten, wenn in der bereits geholten History eine offene
-# Hauptkanal-Nachricht von Florian ohne erledigt-Reaktion vorhanden ist.
-HAS_UNPROCESSED=$(echo "$RECENT" | python3 -c "
-import sys, json
+# Nur Claude starten, wenn in der bereits geholten History eine neue offene
+# Hauptkanal-Nachricht von Florian vorhanden ist. Die lokale Last-Seen-Datei
+# verhindert Wiederholungen, falls Slack keine Reaktionen liefert oder Claude
+# die erledigt-Reaktion nicht setzen konnte.
+LAST_SEEN=""
+[ -f "$LAST_SEEN_FILE" ] && LAST_SEEN=$(cat "$LAST_SEEN_FILE" 2>/dev/null)
 
-USER_ID = '$USER_ID'
+TRIGGER_DECISION=$(printf '%s' "$RECENT" | LAST_SEEN="$LAST_SEEN" USER_ID="$USER_ID" python3 -c '
+import json, os, sys
+from decimal import Decimal, InvalidOperation
+
+user_id = os.environ["USER_ID"]
+last_seen = os.environ.get("LAST_SEEN", "").strip()
+
+def to_decimal(value):
+    try:
+        return Decimal(value)
+    except (InvalidOperation, TypeError):
+        return Decimal("0")
 
 try:
     d = json.load(sys.stdin)
 except Exception:
-    sys.exit(2)
+    print("ERROR")
+    raise SystemExit
 
-if not d.get('ok', False):
-    sys.exit(2)
+if not d.get("ok", False):
+    print("ERROR")
+    raise SystemExit
 
-for m in d.get('messages', []):
-    text = m.get('text', '').strip()
-    reactions = m.get('reactions', [])
-    reaction_names = {r.get('name') for r in reactions}
+baseline_messages = []
+candidates = []
+for m in d.get("messages", []):
+    text = m.get("text", "").strip()
+    reactions = m.get("reactions", [])
+    reaction_names = {r.get("name") for r in reactions}
 
-    is_from_user = m.get('user') == USER_ID
-    is_bot = 'bot_id' in m
-    is_command = text.startswith('!')
-    is_done = 'white_check_mark' in reaction_names or 'heavy_check_mark' in reaction_names
+    is_from_user = m.get("user") == user_id
+    is_bot = "bot_id" in m
+    is_command = text.startswith("!")
+    is_done = "white_check_mark" in reaction_names or "heavy_check_mark" in reaction_names
+    ts = m.get("ts", "")
 
-    if is_from_user and not is_bot and not is_command and not is_done:
-        sys.exit(0)
+    if is_from_user and not is_bot and not is_command and ts:
+        baseline_messages.append(ts)
 
-sys.exit(1)
-" 2>/dev/null; echo $?)
+    if is_from_user and not is_bot and not is_command and not is_done and ts:
+        candidates.append(ts)
 
-if [ "$HAS_UNPROCESSED" = "2" ]; then
+if not last_seen:
+    latest_seen = max(baseline_messages, key=to_decimal) if baseline_messages else "0"
+    print(f"INIT {latest_seen}")
+    raise SystemExit
+
+if not candidates:
+    print("NONE")
+    raise SystemExit
+
+latest = max(candidates, key=to_decimal)
+if to_decimal(latest) > to_decimal(last_seen):
+    print(f"RUN {latest}")
+else:
+    print("NONE")
+')
+
+if [ "$TRIGGER_DECISION" = "ERROR" ]; then
     log "Slack-History konnte nicht lokal geprüft werden. Überspringe Claude."
     exit 0
 fi
 
-if [ "$HAS_UNPROCESSED" != "0" ]; then
-    log "Keine unverarbeitete Hauptkanal-Nachricht. Überspringe Claude."
+if [[ "$TRIGGER_DECISION" == INIT\ * ]]; then
+    echo "${TRIGGER_DECISION#INIT }" > "$LAST_SEEN_FILE"
+    log "Last-Seen initialisiert (${TRIGGER_DECISION#INIT }). Überspringe Claude."
     exit 0
 fi
 
+if [ "$TRIGGER_DECISION" = "NONE" ]; then
+    log "Keine neue unverarbeitete Hauptkanal-Nachricht. Überspringe Claude."
+    exit 0
+fi
+
+TRIGGER_TS="${TRIGGER_DECISION#RUN }"
+echo "$TRIGGER_TS" > "$LAST_SEEN_FILE"
+
 # Dispatcher ausführen
-log "Starte Dispatcher-Runde..."
+log "Starte Dispatcher-Runde für Hauptkanal-Nachricht $TRIGGER_TS..."
 "$CLAUDE" --print \
     "Du bist der BrainVault Dispatcher. Führe genau eine Runde aus:
 1. Lies #dispatcher (Kanal-ID: C0B9L30KVR6) - die letzten 20 Nachrichten.
