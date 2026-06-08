@@ -157,6 +157,28 @@ Frage im Slack-Thread nach Quelle oder Entscheidung. Markiere die Nachricht mit
 - Ignoriere Bot-Nachrichten (haben `bot_id`)
 - Ignoriere Nachrichten die bereits ✅ haben
 
+## MailPilot-Steuerung: /stop und /start
+
+Florian kann den MailPilot-LaunchAgent (Email Assistant, pollt alle 2 Min.
+unter dem Label `com.mailpilot.email-assistant`, Code in
+`/Users/Shared/GIT/mailpilot/`) direkt über #dispatcher steuern. Erkenne
+folgende Nachrichten von U0B8VCCEB9A (auch als reguläre Auftragsnachricht,
+nicht nur als Thread-Reply):
+
+- **`/stop mailpilot`** (auch `/stop mailassistent`, `/stop email`) → führe aus:
+  `launchctl unload ~/Library/LaunchAgents/com.mailpilot.email-assistant.plist`
+- **`/start mailpilot`** (auch `/start mailassistent`, `/start email`) → führe aus:
+  `launchctl load ~/Library/LaunchAgents/com.mailpilot.email-assistant.plist`
+
+Nach jedem Befehl: Status mit `launchctl list com.mailpilot.email-assistant`
+verifizieren (geladen ja/nein, `LastExitStatus`) und das tatsächliche Ergebnis
+— nicht nur die Befehlsausführung — im Thread mitteilen. Behandle den Befehl
+wie jeden anderen #dispatcher-Auftrag (Schritte 1-5: ausführen, im Thread
+antworten, ✅ setzen, in LOG.md loggen).
+
+**Hinweis:** Das funktioniert nur, solange diese Dispatcher-Session läuft
+(Polling, kein Instant-Trigger über echte Slack-Slash-Commands).
+
 ## Kanal #blog: Content-Pipeline für it-beratung-million.de
 
 Florian nutzt den separaten Kanal **#blog** (ID: C0B8YRD90ES), um auf Zuruf
