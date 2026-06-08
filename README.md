@@ -17,7 +17,7 @@ Morgens beim Kaffee sind alle Aufgaben erledigt und die Ergebnisse warten in Obs
 ```
 Du (iPhone / Apple Watch)
 ├── Slack → Ideen einwerfen, Benachrichtigungen
-├── Gmail → weitergeleitete E-Mails an den Assistant
+├── Gmail → weitergeleitete E-Mails an MailPilot
 ├── Claude App → Sessions steuern via Remote Control
 └── Obsidian → Ergebnisse lesen
         ↓
@@ -26,7 +26,8 @@ Tailscale VPN (sicherer Tunnel)
 Mac mini
 ├── Dispatcher Session → koordiniert alle Aufgaben
 ├── Auditor Agent → prüft Quellen, Fußnoten und Nachvollziehbarkeit
-├── Email Assistant → Gmail lesen, Entwurf bauen, Slack-Freigabe einholen
+├── MailPilot → eigenständiges Tool (separates Repo & LaunchAgent),
+│   Gmail lesen, Entwurf bauen, Slack-Freigabe einholen
 ├── Session A & B → Recherche / Web-Suche
 ├── Session C & D → Daten verarbeiten
 └── Session E → Texte zusammenfassen
@@ -72,13 +73,20 @@ BrainVault/
 | `#brain-status` | Dispatcher → Sessions: Aufgaben-Zuweisung |
 | `#brain-fertig` | Sessions → Du: Ergebnisse fertig |
 | `#dispatcher` | Dispatcher-Steuerung |
-| `#email-assistant` | Private Freigaben und Verfeinerungen für E-Mail-Entwürfe |
+| `#email-assistant` | Private Freigaben und Verfeinerungen für MailPilot-Entwürfe |
 
 ---
 
-## Email Assistant
+## MailPilot (ausgelagertes Tool)
 
-Weitergeleitete E-Mails werden nicht automatisch beantwortet. Der Assistant verarbeitet nur Mails von erlaubten Florian-Absenderadressen, trennt private Instruktionen von der Originalmail, erstellt mit Claude einen Antwortvorschlag und fragt in Slack nach Freigabe.
+> MailPilot ist **kein Teil von BrainVault** mehr, sondern ein eigenständiges,
+> öffentliches Projekt mit eigenem Repo und LaunchAgent (siehe unten). Es läuft
+> zwar auf demselben Mac mini und ist über Slack mit dem BrainVault-Dispatcher
+> verzahnt, wird aber unabhängig entwickelt und gepflegt. Die folgende
+> Kurzbeschreibung dient nur dem Verständnis der Slack-Integration aus
+> BrainVault-Sicht — die vollständige Doku liegt im MailPilot-Repo selbst.
+
+Weitergeleitete E-Mails werden nicht automatisch beantwortet. MailPilot verarbeitet nur Mails von erlaubten Florian-Absenderadressen, trennt private Instruktionen von der Originalmail, erstellt mit Claude einen Antwortvorschlag und fragt in Slack nach Freigabe.
 
 ### Weiterleitungsformat
 
@@ -97,7 +105,7 @@ Kurze implizite Anweisungen oberhalb der weitergeleiteten Nachricht werden ebenf
 
 ### Slack-Freigabe
 
-Der Assistant postet den Entwurf als Thread in `#email-assistant`. Florian reagiert dort mit Emoji-Aktionen:
+MailPilot postet den Entwurf als Thread in `#email-assistant`. Florian reagiert dort mit Emoji-Aktionen:
 
 ```text
 ✅ senden
@@ -142,7 +150,7 @@ das Ergebnis im Thread.
 | Tailscale | Sicherer Remote-Zugriff |
 | Syncthing | Vault-Sync auf alle Geräte |
 | Slack | Kommunikation zwischen dir und Sessions |
-| Gmail API | Eingang, Entwürfe und Versand für den Email Assistant |
+| Gmail API | Eingang, Entwürfe und Versand für MailPilot (separates Tool, nicht Teil von BrainVault) |
 | Obsidian | Vault lesen auf allen Geräten |
 
 ---
@@ -277,15 +285,17 @@ flowchart LR
     F --> G["📱 Syncthing → alle Geräte"]
 ```
 
-### 2. Email Assistant
+### 2. MailPilot (ausgelagertes Tool)
 
 Weitergeleitete Mails mit Anweisungsblock werden nie automatisch beantwortet —
-der Assistant baut einen Entwurf und holt sich die Freigabe per Slack-Reaktion
-oder Thread-Antwort ein.
+MailPilot baut einen Entwurf und holt sich die Freigabe per Slack-Reaktion
+oder Thread-Antwort ein. Läuft als eigenständiges Projekt neben BrainVault,
+ist aber über Slack mit dem Dispatcher verzahnt (siehe Abschnitt "MailPilot
+(ausgelagertes Tool)" oben).
 
 ```mermaid
 flowchart LR
-    A["📧 Weitergeleitete Mail<br/>+ Anweisungsblock"] --> B["📨 Email Assistant<br/>trennt Anweisung von Originalmail"]
+    A["📧 Weitergeleitete Mail<br/>+ Anweisungsblock"] --> B["📨 MailPilot<br/>trennt Anweisung von Originalmail"]
     B --> C["✍️ Claude-Entwurf"]
     C --> D{"💬 Slack-Thread<br/>#email-assistant"}
     D -- "✅ senden" --> E["📤 Gmail: Senden"]
