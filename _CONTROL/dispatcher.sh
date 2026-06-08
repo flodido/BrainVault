@@ -7,6 +7,7 @@ VAULT="$HOME/BrainVault"
 CONTROL="$VAULT/_CONTROL"
 STOP_FILE="$CONTROL/DISPATCHER-STOP"
 LAST_SEEN_FILE="$CONTROL/DISPATCHER-LAST-SEEN-MAIN-TS"
+AUDIT_QUEUE="$CONTROL/AUDIT-QUEUE.md"
 CLAUDE="$HOME/.local/bin/claude"
 CHANNEL="C0B9L30KVR6"
 USER_ID="U0B8VCCEB9A"
@@ -190,16 +191,23 @@ if [[ "$TRIGGER_DECISION" == INIT\ * ]]; then
 fi
 
 if [ "$TRIGGER_DECISION" = "NONE" ]; then
-    log "Keine neue unverarbeitete Slack-Nachricht. Überspringe Claude."
-    exit 0
+    if [ -f "$AUDIT_QUEUE" ] && grep -Eq '^- \[ \] ' "$AUDIT_QUEUE"; then
+        TRIGGER_TS=""
+        log "Offene Audit-Queue gefunden. Starte Dispatcher-Audit-Runde..."
+    else
+        log "Keine neue unverarbeitete Slack-Nachricht und keine offene Audit-Queue. Überspringe Claude."
+        exit 0
+    fi
+else
+    TRIGGER_TS="${TRIGGER_DECISION#RUN }"
+    echo "$TRIGGER_TS" > "$LAST_SEEN_FILE"
 fi
 
-TRIGGER_TS="${TRIGGER_DECISION#RUN }"
-echo "$TRIGGER_TS" > "$LAST_SEEN_FILE"
-
 # Dispatcher ausführen
-slack_react "eyes" "$TRIGGER_TS"
-log "Starte Dispatcher-Runde für Slack-Nachricht $TRIGGER_TS..."
+if [ -n "$TRIGGER_TS" ]; then
+    slack_react "eyes" "$TRIGGER_TS"
+    log "Starte Dispatcher-Runde für Slack-Nachricht $TRIGGER_TS..."
+fi
 "$CLAUDE" --print \
     --permission-mode acceptEdits \
     "Du bist der BrainVault Dispatcher. Führe genau eine Runde aus:
@@ -207,8 +215,13 @@ log "Starte Dispatcher-Runde für Slack-Nachricht $TRIGGER_TS..."
 2. Hauptkanal: Verarbeite NUR Nachrichten von User-ID $USER_ID ohne ✅-Reaktion und ohne bot_id.
 3. Threads: Wenn eine Nachricht reply_count > 0 hat und reply_users $BOT_USER_ID oder $USER_ID enthält, lies den Thread. Verarbeite dort Replies von User-ID $USER_ID ohne ✅-Reaktion und ohne bot_id genauso wie Hauptkanal-Nachrichten.
 4. Ignoriere Nachrichten die mit ! beginnen (Steuerbefehle).
-5. Für jede neue Nachricht oder Thread-Reply: analysiere, führe aus, antworte im Thread, setze ✅-Reaktion auf genau diese Nachricht.
-6. Wenn keine neuen Nachrichten: tue nichts, gib keine Ausgabe.
+5. Für jede neue Nachricht oder Thread-Reply: analysiere und führe aus.
+6. Wenn dabei eine neue oder wesentlich geänderte Wissensdatei in Research/, Data/Processed/, _INBOX/ oder vergleichbaren Markdown-Notizen entsteht: bestimme den Audit-Modus. Explizite Angaben von Florian übernehmen; sonst standard setzen. Automatisch strict setzen bei Veröffentlichung, Website, Blogartikel, LinkedIn, Kundenbezug, Recht/DSGVO, Finanzen, Medizin, harten Zahlen, Zitaten oder High-Stakes-Themen.
+7. Belege jede Sachbehauptung mit Fußnoten, trage die Datei mit Audit-Modus in _CONTROL/AUDIT-QUEUE.md ein und starte den Subagenten brainvault-auditor.
+8. Eine Erstellung ist erst abgeschlossen, wenn brainvault-auditor approved vergibt und die Modus-Schwelle erreicht ist: quick >= 85, standard >= 92, strict >= 97. Erst dann antworte im Thread mit Fertigmeldung und setze ✅ auf die ursprüngliche Nachricht.
+9. Bei Audit-Score unter der Modus-Schwelle: arbeite die Nachbesserungsanweisungen selbst ab oder gib sie an den ausführenden Agenten zurück; danach erneut auditieren. Keine Fertigmeldung und keine Erledigt-Markierung vor Freigabe.
+10. Wenn keine neuen Nachrichten vorhanden sind, aber _CONTROL/AUDIT-QUEUE.md offene Einträge enthält: bearbeite genau diese Audit-/Nacharbeitsrunde.
+11. Wenn weder neue Nachrichten noch offene Audit-Einträge vorhanden sind: tue nichts, gib keine Ausgabe.
 Vault-Pfad: $VAULT" \
     --add-dir "$VAULT" \
     2>> "$LOG"

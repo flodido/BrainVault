@@ -25,6 +25,7 @@ Tailscale VPN (sicherer Tunnel)
         ↓
 Mac mini
 ├── Dispatcher Session → koordiniert alle Aufgaben
+├── Auditor Agent → prüft Quellen, Fußnoten und Nachvollziehbarkeit
 ├── Email Assistant → Gmail lesen, Entwurf bauen, Slack-Freigabe einholen
 ├── Session A & B → Recherche / Web-Suche
 ├── Session C & D → Daten verarbeiten
@@ -46,6 +47,8 @@ BrainVault/
 │   ├── STATUS.md           ← Session-Übersicht
 │   ├── LOG.md              ← Aktivitätslog
 │   ├── DISPATCHER-PROMPT.md
+│   ├── AUDITOR-PROMPT.md
+│   ├── AUDIT-QUEUE.md
 │   └── SESSION-PROMPTS.md
 ├── _INBOX/                 ← Rohdaten, noch nicht verarbeitet
 ├── _ARCHIVE/               ← Erledigte Aufgaben
@@ -216,9 +219,30 @@ claude
 1. Idee in Slack `#brain-ideen` einwerfen – per iPhone, Apple Watch oder Diktat
 2. Dispatcher analysiert und weist der passenden Session zu
 3. Session arbeitet selbstständig
-4. Ergebnis landet als `.md` Note im Vault
-5. Syncthing verteilt auf alle Geräte
-6. Du bekommst Notification in `#brain-fertig`
+4. Ergebnis landet als auditierbare `.md` Note im Vault
+5. Auditor prüft Quellen, Fußnoten und Nachvollziehbarkeit im passenden Modus
+6. Bei Score unter der Modus-Schwelle geht die Note mit konkreten Nachbesserungen zurück
+7. Erst bei Auditor-Freigabe wird der Task als erledigt markiert
+8. Syncthing verteilt auf alle Geräte
+9. Du bekommst Notification in `#brain-fertig`
+
+### Audit-Gate
+
+BrainVault-Notizen mit Recherche-, Analyse-, Konzept- oder
+Zusammenfassungscharakter dürfen keine unbelegten Sachbehauptungen enthalten.
+Jede nicht-triviale Aussage braucht eine Fußnote (`[^id]`) auf eine konkrete
+Quelle. Eine reine Quellenliste am Ende genügt nicht.
+
+Audit-Modi:
+
+- `quick`: ab 85/100 für Skizzen und frühe Entwürfe
+- `standard`: ab 92/100 als Default für normale BrainVault-Notizen
+- `strict`: ab 97/100 für Veröffentlichung, Website, Kundenbezug, Recht/DSGVO,
+  Finanzen, Medizin, harte Zahlen, Zitate oder High-Stakes-Themen
+
+Der Modus kann im Prompt angegeben werden, z. B. `Audit-Modus: standard`.
+Ohne Angabe nutzt der Dispatcher `standard` und stuft automatisch auf `strict`
+hoch, wenn der Auftrag nach Veröffentlichung oder High-Stakes klingt.
 
 ---
 

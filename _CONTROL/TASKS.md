@@ -17,9 +17,9 @@
 
 <!-- Dispatcher trägt hier ein, wer was macht -->
 
-| Session | Task | Gestartet | Status |
-|---------|------|-----------|--------|
-| — | — | — | — |
+| Session | Task | Gestartet | Status | Audit |
+|---------|------|-----------|--------|-------|
+| — | — | — | — | — |
 
 ---
 
@@ -27,9 +27,9 @@
 
 <!-- Sessions tragen hier ein wenn fertig -->
 
-| Session | Task | Ergebnis | Abgeschlossen |
-|---------|------|----------|---------------|
-| — | — | — | — |
+| Session | Task | Ergebnis | Abgeschlossen | Audit |
+|---------|------|----------|---------------|-------|
+| — | — | — | — | — |
 
 ---
 
