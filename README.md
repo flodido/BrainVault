@@ -120,7 +120,9 @@ ablehnen
 
 Jede andere Thread-Antwort wird als Verfeinerung verstanden, z.B. `Kürzer und etwas wärmer`.
 
-Setup und Code liegen unter `_CONTROL/email-assistant/`.
+Setup und Code wurden in das eigenständige (öffentliche) Repo
+[MailPilot](https://github.com/flodido/mailpilot) ausgelagert
+(`/Users/Shared/GIT/mailpilot/`), LaunchAgent: `com.mailpilot.email-assistant`.
 
 ---
 
@@ -243,6 +245,70 @@ Audit-Modi:
 Der Modus kann im Prompt angegeben werden, z. B. `Audit-Modus: standard`.
 Ohne Angabe nutzt der Dispatcher `standard` und stuft automatisch auf `strict`
 hoch, wenn der Auftrag nach Veröffentlichung oder High-Stakes klingt.
+
+---
+
+## Use Cases im Überblick
+
+Drei wiederkehrende Abläufe zeigen, wie Aufträge durch BrainVault laufen —
+von der Idee bis zum geprüften Ergebnis.
+
+### 1. Recherche-Auftrag
+
+Eine Idee in `#brain-ideen` wird vom Dispatcher an eine Spezial-Session
+weitergegeben, landet als Notiz im Vault und muss den Auditor passieren,
+bevor der Task als erledigt gilt.
+
+```mermaid
+flowchart LR
+    A["💡 Idee in #brain-ideen"] --> B["🧭 Dispatcher routet"]
+    B --> C["🔬 Session recherchiert"]
+    C --> D[("🗂️ Notiz im Vault")]
+    D --> E["🔍 Auditor prüft<br/>quick / standard / strict"]
+    E -- "Score zu niedrig: REWORK" --> C
+    E -- "Score erreicht: approved" --> F["🔔 #brain-fertig"]
+    F --> G["📱 Syncthing → alle Geräte"]
+```
+
+### 2. Email Assistant
+
+Weitergeleitete Mails mit Anweisungsblock werden nie automatisch beantwortet —
+der Assistant baut einen Entwurf und holt sich die Freigabe per Slack-Reaktion
+oder Thread-Antwort ein.
+
+```mermaid
+flowchart LR
+    A["📧 Weitergeleitete Mail<br/>+ Anweisungsblock"] --> B["📨 Email Assistant<br/>trennt Anweisung von Originalmail"]
+    B --> C["✍️ Claude-Entwurf"]
+    C --> D{"💬 Slack-Thread<br/>#email-assistant"}
+    D -- "✅ senden" --> E["📤 Gmail: Senden"]
+    D -- "📝 Entwurf" --> F["📋 Gmail: Draft erstellen"]
+    D -- "Verfeinerung z. B. 'kürzer & wärmer'" --> C
+    D -- "❌ ablehnen" --> G["🗑️ verworfen"]
+```
+
+### 3. Content-Pipeline mit mehrstufiger Freigabe
+
+Manche Outputs sollen nicht nur im Vault landen, sondern öffentlich
+veröffentlicht werden (z. B. auf einer eigenen Website oder einem Blog).
+Dafür eignet sich ein dedizierter Kanal, in dem auf Zuruf Themenideen
+entstehen, ein doppeltes Audit-Gate (niedrigere Schwelle für die erste
+Rückmeldung, strenge Schwelle als Pflicht vor Veröffentlichung) und mehrere
+**getrennte, ausdrückliche Bestätigungen**, bevor irgendetwas live geht.
+
+```mermaid
+flowchart TD
+    A["✍️ Themen-Anfrage in dediziertem Kanal"] --> B["🧭 Dispatcher: Themenvorschläge<br/>1️⃣ 2️⃣ 3️⃣"]
+    B --> C["👍 Auswahl durch Florian"]
+    C --> D["🔬 Recherche + Entwurf<br/>+ Begleittexte (z. B. Social Media)"]
+    D --> E["🔍 Audit: erste Stufe<br/>niedrigere Schwelle"]
+    E --> F{"💬 Präsentation im Thread<br/>+ Ablage im Vault"}
+    F -- "① ✅ inhaltlich ok" --> G["🔍 Audit: strenge Stufe<br/>Veröffentlichungs-Schwelle"]
+    G -- "Score zu niedrig: REWORK" --> D
+    G -- "Schwelle erreicht" --> H{"② Bestätigung<br/>'jetzt veröffentlichen?'"}
+    H -- "③ ✅ + Commit-Bestätigung" --> I[("🌐 Live-Beitrag<br/>auf eigener Plattform")]
+    I --> J["📣 Begleittexte<br/>+ Link zum Teilen"]
+```
 
 ---
 
