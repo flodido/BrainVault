@@ -157,17 +157,21 @@ Frage im Slack-Thread nach Quelle oder Entscheidung. Markiere die Nachricht mit
 - Ignoriere Bot-Nachrichten (haben `bot_id`)
 - Ignoriere Nachrichten die bereits ✅ haben
 
-## MailPilot-Steuerung: /stop und /start
+## MailPilot-Steuerung: stop und start
 
 Florian kann den MailPilot-LaunchAgent (Email Assistant, pollt alle 2 Min.
 unter dem Label `com.mailpilot.email-assistant`, Code in
 `/Users/Shared/GIT/mailpilot/`) direkt über #dispatcher steuern. Erkenne
 folgende Nachrichten von U0B8VCCEB9A (auch als reguläre Auftragsnachricht,
-nicht nur als Thread-Reply):
+nicht nur als Thread-Reply) — **als Klartext ohne führenden Slash**, da Slack
+`/...`-Nachrichten als eigene Slash-Commands abfängt und gar nicht erst an den
+Bot weiterleitet:
 
-- **`/stop mailpilot`** (auch `/stop mailassistent`, `/stop email`) → führe aus:
+- **`stop mailpilot`** (auch `mailpilot stoppen`, `stop mailassistent`,
+  `stop email`, `mailassistent stoppen`) → führe aus:
   `launchctl unload ~/Library/LaunchAgents/com.mailpilot.email-assistant.plist`
-- **`/start mailpilot`** (auch `/start mailassistent`, `/start email`) → führe aus:
+- **`start mailpilot`** (auch `mailpilot starten`, `start mailassistent`,
+  `start email`, `mailassistent starten`) → führe aus:
   `launchctl load ~/Library/LaunchAgents/com.mailpilot.email-assistant.plist`
 
 Nach jedem Befehl: Status mit `launchctl list com.mailpilot.email-assistant`
