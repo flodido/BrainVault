@@ -124,6 +124,13 @@ Setup und Code wurden in das eigenständige (öffentliche) Repo
 [MailPilot](https://github.com/flodido/mailpilot) ausgelagert
 (`/Users/Shared/GIT/mailpilot/`), LaunchAgent: `com.mailpilot.email-assistant`.
 
+**Steuerung über den Dispatcher:** Florian kann den MailPilot-LaunchAgent direkt
+per Klartext-Nachricht in `#dispatcher` starten/stoppen — z. B. `stop mailpilot`
+oder `mailpilot starten` (bewusst ohne führenden Slash, da Slack `/...`-Nachrichten
+sonst als eigene Slash-Commands abfängt, statt sie an den Bot weiterzuleiten). Der
+Dispatcher führt `launchctl unload`/`load` aus, verifiziert den Status und meldet
+das Ergebnis im Thread.
+
 ---
 
 ## Voraussetzungen
