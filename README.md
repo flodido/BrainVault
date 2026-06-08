@@ -68,23 +68,20 @@ BrainVault/
 
 | Channel | Zweck |
 |---------|-------|
-| `#brain-ideen` | Du wirfst Ideen rein → Dispatcher verteilt |
-| `#brain-fragen` | Sessions fragen dich bei Unklarheiten |
-| `#brain-status` | Dispatcher → Sessions: Aufgaben-Zuweisung |
-| `#brain-fertig` | Sessions → Du: Ergebnisse fertig |
-| `#dispatcher` | Dispatcher-Steuerung |
-| `#email-assistant` | Private Freigaben und Verfeinerungen für MailPilot-Entwürfe |
+| `#dispatcher` | Aufträge einwerfen, Rückfragen, Ergebnisse, Steuerung der Sessions/Tools |
+| `#blog` | Themenfindung & mehrstufige Freigabe für die Content-Pipeline |
 
 ---
 
 ## MailPilot (ausgelagertes Tool)
 
 > MailPilot ist **kein Teil von BrainVault** mehr, sondern ein eigenständiges,
-> öffentliches Projekt mit eigenem Repo und LaunchAgent (siehe unten). Es läuft
-> zwar auf demselben Mac mini und ist über Slack mit dem BrainVault-Dispatcher
-> verzahnt, wird aber unabhängig entwickelt und gepflegt. Die folgende
-> Kurzbeschreibung dient nur dem Verständnis der Slack-Integration aus
-> BrainVault-Sicht — die vollständige Doku liegt im MailPilot-Repo selbst.
+> öffentliches Projekt mit eigenem Repo. Es läuft auf demselben Mac mini und ist
+> per Slack lose mit dem BrainVault-Dispatcher verzahnt, wird aber unabhängig
+> entwickelt und gepflegt. Die folgende Kurzbeschreibung dient nur dem
+> Verständnis der Slack-Integration aus BrainVault-Sicht — Setup, Steuerung und
+> die vollständige Doku liegen im [MailPilot-Repo](https://github.com/flodido/mailpilot)
+> selbst.
 
 Weitergeleitete E-Mails werden nicht automatisch beantwortet. MailPilot verarbeitet nur Mails von erlaubten Florian-Absenderadressen, trennt private Instruktionen von der Originalmail, erstellt mit Claude einen Antwortvorschlag und fragt in Slack nach Freigabe.
 
@@ -105,39 +102,12 @@ Kurze implizite Anweisungen oberhalb der weitergeleiteten Nachricht werden ebenf
 
 ### Slack-Freigabe
 
-MailPilot postet den Entwurf als Thread in `#email-assistant`. Florian reagiert dort mit Emoji-Aktionen:
-
-```text
-✅ senden
-📝 Gmail-Entwurf erstellen
-❌ ablehnen
-```
-
-Alternativ antwortet Florian im Thread mit:
-
-```text
-senden
-```
-
-oder:
-
-```text
-entwurf
-ablehnen
-```
-
-Jede andere Thread-Antwort wird als Verfeinerung verstanden, z.B. `Kürzer und etwas wärmer`.
-
-Setup und Code wurden in das eigenständige (öffentliche) Repo
-[MailPilot](https://github.com/flodido/mailpilot) ausgelagert
-(`/Users/Shared/GIT/mailpilot/`), LaunchAgent: `com.mailpilot.email-assistant`.
-
-**Steuerung über den Dispatcher:** Florian kann den MailPilot-LaunchAgent direkt
-per Klartext-Nachricht in `#dispatcher` starten/stoppen — z. B. `stop mailpilot`
-oder `mailpilot starten` (bewusst ohne führenden Slash, da Slack `/...`-Nachrichten
-sonst als eigene Slash-Commands abfängt, statt sie an den Bot weiterzuleiten). Der
-Dispatcher führt `launchctl unload`/`load` aus, verifiziert den Status und meldet
-das Ergebnis im Thread.
+MailPilot postet jeden Entwurf als Thread in einem dedizierten Slack-Kanal.
+Darauf lässt sich per Emoji-Reaktion oder Textantwort reagieren — senden, als
+Gmail-Entwurf ablegen, ablehnen oder verfeinern (z. B. `Kürzer und etwas
+wärmer`). Welcher Kanal das genau ist, wie die Reaktionen im Detail aussehen
+und wie das Tool gestartet/gestoppt wird, ist Teil des eigenständigen
+[MailPilot-Repos](https://github.com/flodido/mailpilot) und dort dokumentiert.
 
 ---
 
@@ -233,7 +203,7 @@ claude
 
 ## Workflow
 
-1. Idee in Slack `#brain-ideen` einwerfen – per iPhone, Apple Watch oder Diktat
+1. Idee in Slack `#dispatcher` einwerfen – per iPhone, Apple Watch oder Diktat
 2. Dispatcher analysiert und weist der passenden Session zu
 3. Session arbeitet selbstständig
 4. Ergebnis landet als auditierbare `.md` Note im Vault
@@ -241,7 +211,7 @@ claude
 6. Bei Score unter der Modus-Schwelle geht die Note mit konkreten Nachbesserungen zurück
 7. Erst bei Auditor-Freigabe wird der Task als erledigt markiert
 8. Syncthing verteilt auf alle Geräte
-9. Du bekommst Notification in `#brain-fertig`
+9. Du bekommst die Rückmeldung im `#dispatcher`-Thread
 
 ### Audit-Gate
 
@@ -270,18 +240,18 @@ von der Idee bis zum geprüften Ergebnis.
 
 ### 1. Recherche-Auftrag
 
-Eine Idee in `#brain-ideen` wird vom Dispatcher an eine Spezial-Session
+Eine Idee in `#dispatcher` wird vom Dispatcher an eine Spezial-Session
 weitergegeben, landet als Notiz im Vault und muss den Auditor passieren,
 bevor der Task als erledigt gilt.
 
 ```mermaid
 flowchart LR
-    A["💡 Idee in #brain-ideen"] --> B["🧭 Dispatcher routet"]
+    A["💡 Idee in #dispatcher"] --> B["🧭 Dispatcher routet"]
     B --> C["🔬 Session recherchiert"]
     C --> D[("🗂️ Notiz im Vault")]
     D --> E["🔍 Auditor prüft<br/>quick / standard / strict"]
     E -- "Score zu niedrig: REWORK" --> C
-    E -- "Score erreicht: approved" --> F["🔔 #brain-fertig"]
+    E -- "Score erreicht: approved" --> F["🔔 Rückmeldung im Thread"]
     F --> G["📱 Syncthing → alle Geräte"]
 ```
 
@@ -297,7 +267,7 @@ ist aber über Slack mit dem Dispatcher verzahnt (siehe Abschnitt "MailPilot
 flowchart LR
     A["📧 Weitergeleitete Mail<br/>+ Anweisungsblock"] --> B["📨 MailPilot<br/>trennt Anweisung von Originalmail"]
     B --> C["✍️ Claude-Entwurf"]
-    C --> D{"💬 Slack-Thread<br/>#email-assistant"}
+    C --> D{"💬 Slack-Thread<br/>(Freigabe)"}
     D -- "✅ senden" --> E["📤 Gmail: Senden"]
     D -- "📝 Entwurf" --> F["📋 Gmail: Draft erstellen"]
     D -- "Verfeinerung z. B. 'kürzer & wärmer'" --> C
