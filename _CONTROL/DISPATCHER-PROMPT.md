@@ -1,6 +1,18 @@
 # DISPATCHER – Start-Prompt
 
-Kopiere diesen Text als ersten Prompt wenn du die Dispatcher-Session startest.
+## Manuell im Terminal starten (ohne Slack)
+
+```bash
+start-dispatcher
+```
+
+Startet eine interaktive Claude-Session im BrainVault-Verzeichnis und schickt diesen
+Prompt automatisch als erste Nachricht ab — der Dispatcher legt sofort los, du kannst
+direkt mitarbeiten/eingreifen. Das Kommando ist ein Symlink auf
+`_CONTROL/start-dispatcher.sh` in `~/.local/bin` (liegt im PATH).
+
+Alternativ manuell: Kopiere den Text unten als ersten Prompt, wenn du die
+Dispatcher-Session selbst startest (`cd ~/BrainVault && claude`).
 
 ---
 

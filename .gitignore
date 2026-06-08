@@ -19,6 +19,7 @@ Neuer Link.md
 
 # Logs und Run-Protokolle — nur leeres Template tracken
 _CONTROL/DISPATCHER-RUN.log
+_CONTROL/DISPATCHER-LAST-SEEN-MAIN-TS
 
 # Email Assistant secrets and runtime state
 _CONTROL/email-assistant/config.json
