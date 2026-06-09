@@ -9,7 +9,7 @@
     <array>
         <string>/bin/bash</string>
         <string>-c</string>
-        <string>sleep 15 &amp;&amp; launchctl asuser 501 /usr/bin/open -a /Applications/Tailscale.app</string>
+        <string>sleep 15 &amp;&amp; /usr/local/bin/tailscale up</string>
     </array>
 
     <key>RunAtLoad</key>
