@@ -12,6 +12,9 @@
 - [x] Slack Bot erstellen und MCP konfigurieren
 - [x] Dispatcher Session starten und testen
 - [x] Dispatcher LaunchAgent einrichten (alle 5 Min, Kill Switch via !stop/!start)
+- [x] Dispatcher auf LaunchDaemon (System, Boot-persistent) umgestellt — LaunchAgents deaktiviert (.DISABLED), LaunchDaemon in /Library/LaunchDaemons/; Claude läuft via `sudo -n -u vpn-flodido` um bypassPermissions-Block als root zu umgehen
+- [x] Slack Webhook Listener als LaunchDaemon einrichten (Port 9877, Tailscale Funnel, Signatur-Validierung)
+- [x] #blog Kanal in Webhook-Listener geroutet: BLOG_CHANNEL → dispatcher.sh --blog; 👀-Reaktion auf Blog-Nachrichten; DISPATCHER-PROMPT.md enthält vollständigen Content-Pipeline-Workflow
 - [x] Email Assistant Grundgerüst erstellen (Gmail -> Claude -> Slack-Freigabe -> Gmail Send/Draft)
 - [x] Email Assistant Gmail OAuth Credentials erstellen und `credentials.json` hinterlegen
 - [x] Email Assistant `config.json` aus `config.example.json` erstellen

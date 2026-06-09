@@ -15,21 +15,23 @@ import subprocess
 import time
 
 PORT = 9877
-HOME              = os.environ.get("HOME", "")
+HOME               = os.environ.get("HOME", "")
 DISPATCHER_CHANNEL = os.environ.get("DISPATCHER_CHANNEL", "")
+BLOG_CHANNEL       = os.environ.get("BLOG_CHANNEL", "")
 MAILPILOT_CHANNEL  = os.environ.get("MAILPILOT_CHANNEL", "")
 MAILPILOT_DIR      = os.environ.get("MAILPILOT_DIR", "")
 LOCK_FILE          = os.path.join(HOME, "BrainVault/_CONTROL/DISPATCHER-RUNNING.lock")
 LOG_FILE           = os.path.join(HOME, "BrainVault/_CONTROL/slack-listener.log")
 
+_DISPATCHER_SH = ["/bin/bash", os.path.join(HOME, "BrainVault/_CONTROL/dispatcher.sh")]
+
 
 def build_channel_routes() -> dict:
     routes = {}
     if DISPATCHER_CHANNEL:
-        routes[DISPATCHER_CHANNEL] = (
-            "dispatcher",
-            ["/bin/bash", os.path.join(HOME, "BrainVault/_CONTROL/dispatcher.sh")],
-        )
+        routes[DISPATCHER_CHANNEL] = ("dispatcher", _DISPATCHER_SH)
+    if BLOG_CHANNEL:
+        routes[BLOG_CHANNEL] = ("dispatcher-blog", _DISPATCHER_SH + ["--blog"])
     if MAILPILOT_CHANNEL and MAILPILOT_DIR:
         venv_python = os.path.join(MAILPILOT_DIR, ".venv/bin/python")
         script      = os.path.join(MAILPILOT_DIR, "email_assistant.py")
@@ -78,7 +80,7 @@ def dispatcher_already_running() -> bool:
 
 
 def trigger(name: str, cmd: list[str]):
-    if name == "dispatcher" and dispatcher_already_running():
+    if name in ("dispatcher", "dispatcher-blog") and dispatcher_already_running():
         logging.info("Dispatcher läuft bereits — Skip")
         return
     logging.info(f"Starte {name} im Hintergrund")

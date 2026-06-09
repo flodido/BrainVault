@@ -14,6 +14,8 @@ CHANNEL="$DISPATCHER_CHANNEL"
 USER_ID="$FLORIAN_USER"
 BOT_USER_ID="$BOT_USER"
 LOG="$CONTROL/DISPATCHER-RUN.log"
+IS_BLOG=0
+[[ "${1:-}" == "--blog" ]] && IS_BLOG=1
 
 # Token aus ~/.zshrc laden (nicht im Repo gespeichert)
 [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc" 2>/dev/null
@@ -36,10 +38,11 @@ slack_post() {
 slack_react() {
     local name="$1"
     local ts="$2"
+    local ch="${3:-$CHANNEL}"
     curl -s -X POST \
         -H "Authorization: Bearer $TOKEN" \
         -H "Content-Type: application/json" \
-        --data "{\"channel\":\"$CHANNEL\",\"name\":\"$name\",\"timestamp\":\"$ts\"}" \
+        --data "{\"channel\":\"$ch\",\"name\":\"$name\",\"timestamp\":\"$ts\"}" \
         "https://slack.com/api/reactions.add" > /dev/null
 }
 
@@ -79,6 +82,25 @@ if [ -f "$STOP_FILE" ]; then
     exit 0
 fi
 
+if [ "$IS_BLOG" = "1" ]; then
+    TRIGGER_TS=$(curl -s \
+        -H "Authorization: Bearer $TOKEN" \
+        "https://slack.com/api/conversations.history?channel=$BLOG_CHANNEL&limit=10" | \
+        python3 -c "
+import sys, json
+from decimal import Decimal
+d = json.load(sys.stdin)
+msgs = [m for m in d.get('messages', [])
+        if m.get('user') == '$USER_ID'
+        and not m.get('bot_id')
+        and not any(r.get('name') in ('white_check_mark','heavy_check_mark') for r in m.get('reactions', []))]
+print(max(msgs, key=lambda m: Decimal(m['ts']))['ts'] if msgs else '')
+" 2>/dev/null)
+    if [ -n "$TRIGGER_TS" ]; then
+        slack_react "eyes" "$TRIGGER_TS" "$BLOG_CHANNEL"
+    fi
+    log "Blog-Trigger empfangen. Starte Dispatcher-Blog-Runde..."
+else
 # Nur Claude starten, wenn in der bereits geholten History oder in einem
 # relevanten Thread eine neue offene Nachricht von Florian vorhanden ist.
 # Die lokale Last-Seen-Datei
@@ -203,13 +225,14 @@ else
     TRIGGER_TS="${TRIGGER_DECISION#RUN }"
     echo "$TRIGGER_TS" > "$LAST_SEEN_FILE"
 fi
+fi  # IS_BLOG else-Ende
 
 # Lock setzen — verhindert parallele Dispatcher-Läufe
 echo $$ > "$LOCK_FILE"
 trap 'rm -f "$LOCK_FILE"' EXIT
 
 # Dispatcher ausführen
-if [ -n "$TRIGGER_TS" ]; then
+if [ "$IS_BLOG" = "0" ] && [ -n "$TRIGGER_TS" ]; then
     slack_react "eyes" "$TRIGGER_TS"
     log "Starte Dispatcher-Runde für Slack-Nachricht $TRIGGER_TS..."
 fi
@@ -217,7 +240,8 @@ fi
 log "Claude startet (PID $$, user $(id -un))..."
 
 CLAUDE_PROMPT="Du bist der BrainVault Dispatcher. Führe genau eine Runde aus:
-1. Lies #dispatcher (Kanal-ID: C0B9L30KVR6) - die letzten 20 Nachrichten.
+1. Lies #dispatcher (Kanal-ID: $CHANNEL) - die letzten 20 Nachrichten.
+1b. Lies zusätzlich #blog (Kanal-ID: $BLOG_CHANNEL) - die letzten 10 Nachrichten. Für neue Nachrichten von User-ID $USER_ID ohne ✅ gilt der Blog-Workflow (vollständige Anleitung in /Users/vpn-flodido/.claude/projects/-Users-vpn-flodido-BrainVault/memory/feedback-dispatcher-blog-channel.md): Themenvorschläge (1️⃣/2️⃣/3️⃣) → Emoji-Auswahl → Recherche + Entwurf + quick-Audit (≥85) → Präsentation im Thread → ✅-Freigabe → strict-Audit (≥97) → zweite Freigabe → Deployment nach /Users/Shared/GIT/itbm/src/content/blog/ nur nach expliziter dritter Bestätigung.
 2. Hauptkanal: Verarbeite NUR Nachrichten von User-ID $USER_ID ohne ✅-Reaktion und ohne bot_id.
 3. Threads: Wenn eine Nachricht reply_count > 0 hat und reply_users $BOT_USER_ID oder $USER_ID enthält, lies den Thread. Verarbeite dort Replies von User-ID $USER_ID ohne ✅-Reaktion und ohne bot_id genauso wie Hauptkanal-Nachrichten.
 4. Ignoriere Nachrichten die mit ! beginnen (Steuerbefehle).
