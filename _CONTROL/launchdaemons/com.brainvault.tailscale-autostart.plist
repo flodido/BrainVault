@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.brainvault.tailscale-autostart</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>sleep 15 &amp;&amp; launchctl asuser 501 /usr/bin/open -a /Applications/Tailscale.app</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/vpn-flodido/BrainVault/_CONTROL/tailscale-autostart.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/vpn-flodido/BrainVault/_CONTROL/tailscale-autostart.log</string>
+</dict>
+</plist>
