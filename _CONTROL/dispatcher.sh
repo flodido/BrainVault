@@ -3,15 +3,15 @@
 # Läuft alle 5 Minuten via LaunchAgent.
 # Kill switch: "!stop" in #dispatcher → pausiert. "!start" → fortsetzen.
 
-VAULT="$HOME/BrainVault"
-CONTROL="$VAULT/_CONTROL"
+source "$(dirname "${BASH_SOURCE[0]}")/config.sh"
+CONTROL="$CONTROL_DIR"
 STOP_FILE="$CONTROL/DISPATCHER-STOP"
 LAST_SEEN_FILE="$CONTROL/DISPATCHER-LAST-SEEN-MAIN-TS"
 AUDIT_QUEUE="$CONTROL/AUDIT-QUEUE.md"
-CLAUDE="$HOME/.local/bin/claude"
-CHANNEL="C0B9L30KVR6"
-USER_ID="U0B8VCCEB9A"
-BOT_USER_ID="U0B8PNGUM8E"
+CLAUDE="$CLAUDE_BIN"
+CHANNEL="$DISPATCHER_CHANNEL"
+USER_ID="$FLORIAN_USER"
+BOT_USER_ID="$BOT_USER"
 LOG="$CONTROL/DISPATCHER-RUN.log"
 
 # Token aus ~/.zshrc laden (nicht im Repo gespeichert)

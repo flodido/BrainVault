@@ -19,6 +19,9 @@ _INBOX/
 BrainVault/
 Neuer Link.md
 
+# Lokale Konfiguration (Pfade, Slack-IDs) — Vorlage: config.example.sh
+_CONTROL/config.sh
+
 # Logs und Run-Protokolle — nur leeres Template tracken
 _CONTROL/DISPATCHER-RUN.log
 _CONTROL/DISPATCHER-LAST-SEEN-MAIN-TS

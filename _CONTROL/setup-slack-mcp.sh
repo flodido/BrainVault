@@ -4,7 +4,12 @@
 
 set -e
 
-VAULT="$HOME/BrainVault"
+CONFIG_SH="$(dirname "${BASH_SOURCE[0]}")/config.sh"
+if [ -f "$CONFIG_SH" ]; then
+    source "$CONFIG_SH"
+else
+    VAULT="$HOME/BrainVault"
+fi
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 RED='\033[0;31m'
