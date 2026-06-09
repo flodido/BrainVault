@@ -214,10 +214,9 @@ if [ -n "$TRIGGER_TS" ]; then
     log "Starte Dispatcher-Runde für Slack-Nachricht $TRIGGER_TS..."
 fi
 
-log "Claude startet (PID $$)..."
-"$CLAUDE" --print \
-    --permission-mode bypassPermissions \
-    "Du bist der BrainVault Dispatcher. Führe genau eine Runde aus:
+log "Claude startet (PID $$, user $(id -un))..."
+
+CLAUDE_PROMPT="Du bist der BrainVault Dispatcher. Führe genau eine Runde aus:
 1. Lies #dispatcher (Kanal-ID: C0B9L30KVR6) - die letzten 20 Nachrichten.
 2. Hauptkanal: Verarbeite NUR Nachrichten von User-ID $USER_ID ohne ✅-Reaktion und ohne bot_id.
 3. Threads: Wenn eine Nachricht reply_count > 0 hat und reply_users $BOT_USER_ID oder $USER_ID enthält, lies den Thread. Verarbeite dort Replies von User-ID $USER_ID ohne ✅-Reaktion und ohne bot_id genauso wie Hauptkanal-Nachrichten.
@@ -229,9 +228,23 @@ log "Claude startet (PID $$)..."
 9. Bei Audit-Score unter der Modus-Schwelle: arbeite die Nachbesserungsanweisungen selbst ab oder gib sie an den ausführenden Agenten zurück; danach erneut auditieren. Keine Fertigmeldung und keine Erledigt-Markierung vor Freigabe.
 10. Wenn keine neuen Nachrichten vorhanden sind, aber _CONTROL/AUDIT-QUEUE.md offene Einträge enthält: bearbeite genau diese Audit-/Nacharbeitsrunde.
 11. Wenn weder neue Nachrichten noch offene Audit-Einträge vorhanden sind: tue nichts, gib keine Ausgabe.
-Vault-Pfad: $VAULT" \
-    --add-dir "$VAULT" \
-    >> "$LOG" 2>&1
+Vault-Pfad: $VAULT"
+
+if [ "$(id -u)" = "0" ]; then
+    # Als root (LaunchDaemon): Claude als User starten, sonst blockiert bypassPermissions
+    sudo -n -u vpn-flodido -H \
+        "$CLAUDE" --print \
+        --permission-mode bypassPermissions \
+        "$CLAUDE_PROMPT" \
+        --add-dir "$VAULT" \
+        >> "$LOG" 2>&1
+else
+    "$CLAUDE" --print \
+        --permission-mode bypassPermissions \
+        "$CLAUDE_PROMPT" \
+        --add-dir "$VAULT" \
+        >> "$LOG" 2>&1
+fi
 CLAUDE_EXIT=$?
 
 log "Dispatcher-Runde abgeschlossen (Claude exit: $CLAUDE_EXIT)."
