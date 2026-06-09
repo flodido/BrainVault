@@ -2,6 +2,10 @@
 
 Kopiere den jeweiligen Prompt wenn du eine Session startest.
 
+Alle Sessions verwenden fuer neue oder wesentlich geaenderte Obsidian-Notizen
+die zentrale Konvention in `_CONTROL/NOTE-CONVENTIONS.md` (Frontmatter, Tags,
+Wikilinks, Status, Audit-Metadaten).
+
 ---
 
 ## SESSION-A & SESSION-B → Recherche / Web-Suche
@@ -19,12 +23,14 @@ Wenn du eine Aufgabe bekommst: recherchiere gründlich, strukturiert und vollst�
 3. Trage Task in TASKS.md als "In Bearbeitung" ein
 4. Führe die Recherche durch
 5. Schreibe das Ergebnis als .md Datei: ~/BrainVault/Research/[Thema]/[Titel].md
-6. Belege jede nicht-triviale Sachbehauptung mit einer Fußnote im Format `[^id]`
-7. Verlinke verwandte Notes mit [[Wikilinks]]
-8. Trage die Datei in `_CONTROL/AUDIT-QUEUE.md` unter `Offen` ein
-9. Melde in Slack #brain-fertig: "SESSION-A auditbereit: [[Dateiname]] – kurze Zusammenfassung"
-10. Markiere TASKS.md noch nicht als erledigt; Status bleibt bis Auditor-Freigabe offen
-11. Logge in LOG.md
+6. Nutze `_CONTROL/NOTE-CONVENTIONS.md` fuer Frontmatter, Tags, Status,
+   Wikilinks und Audit-Metadaten
+7. Belege jede nicht-triviale Sachbehauptung mit einer Fußnote im Format `[^id]`
+8. Verlinke verwandte Notes mit [[Wikilinks]]
+9. Trage die Datei in `_CONTROL/AUDIT-QUEUE.md` unter `Offen` ein
+10. Melde in Slack #brain-fertig: "SESSION-A auditbereit: [[Dateiname]] – kurze Zusammenfassung"
+11. Markiere TASKS.md noch nicht als erledigt; Status bleibt bis Auditor-Freigabe offen
+12. Logge in LOG.md
 
 ## Datei-Format
 ---
@@ -82,11 +88,13 @@ Wenn du eine Aufgabe bekommst: verarbeite die Daten sauber, strukturiert und vol
 3. Rohdaten findest du in ~/BrainVault/_INBOX/
 4. Verarbeite und bereinige die Daten
 5. Schreibe das Ergebnis nach ~/BrainVault/Data/Processed/[Name].md
-6. Belege jede abgeleitete Aussage mit Fußnoten auf Rohdaten, Quelle oder Berechnung
-7. Trage die Datei in `_CONTROL/AUDIT-QUEUE.md` unter `Offen` ein
-8. Melde in Slack #brain-fertig: "SESSION-C auditbereit: [[Dateiname]] – kurze Zusammenfassung"
-9. Markiere TASKS.md noch nicht als erledigt; Status bleibt bis Auditor-Freigabe offen
-10. Logge in LOG.md
+6. Nutze `_CONTROL/NOTE-CONVENTIONS.md` fuer Frontmatter, Tags, Status,
+   Wikilinks und Audit-Metadaten
+7. Belege jede abgeleitete Aussage mit Fußnoten auf Rohdaten, Quelle oder Berechnung
+8. Trage die Datei in `_CONTROL/AUDIT-QUEUE.md` unter `Offen` ein
+9. Melde in Slack #brain-fertig: "SESSION-C auditbereit: [[Dateiname]] – kurze Zusammenfassung"
+10. Markiere TASKS.md noch nicht als erledigt; Status bleibt bis Auditor-Freigabe offen
+11. Logge in LOG.md
 
 ## Datei-Format
 ---
@@ -145,13 +153,15 @@ Wenn du eine Aufgabe bekommst: fasse präzise, klar und strukturiert zusammen.
 3. Lies die angegebenen Quelldateien oder Links
 4. Schreibe eine prägnante Zusammenfassung
 5. Speichere unter ~/BrainVault/Research/[Thema]/[Titel]-Zusammenfassung.md
-6. Belege jede zusammengefasste Sachbehauptung per Fußnote auf Originaldokument,
+6. Nutze `_CONTROL/NOTE-CONVENTIONS.md` fuer Frontmatter, Tags, Status,
+   Wikilinks und Audit-Metadaten
+7. Belege jede zusammengefasste Sachbehauptung per Fußnote auf Originaldokument,
    Quellabschnitt oder URL
-7. Verlinke Originaldokument und verwandte Notes
-8. Trage die Datei in `_CONTROL/AUDIT-QUEUE.md` unter `Offen` ein
-9. Melde in Slack #brain-fertig: "SESSION-E auditbereit: [[Dateiname]] – kurze Zusammenfassung"
-10. Markiere TASKS.md noch nicht als erledigt; Status bleibt bis Auditor-Freigabe offen
-11. Logge in LOG.md
+8. Verlinke Originaldokument und verwandte Notes
+9. Trage die Datei in `_CONTROL/AUDIT-QUEUE.md` unter `Offen` ein
+10. Melde in Slack #brain-fertig: "SESSION-E auditbereit: [[Dateiname]] – kurze Zusammenfassung"
+11. Markiere TASKS.md noch nicht als erledigt; Status bleibt bis Auditor-Freigabe offen
+12. Logge in LOG.md
 
 ## Vault-Pfad
 ~/BrainVault/Research/
