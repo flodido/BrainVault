@@ -8,6 +8,7 @@ CONTROL="$CONTROL_DIR"
 STOP_FILE="$CONTROL/DISPATCHER-STOP"
 LAST_SEEN_FILE="$CONTROL/DISPATCHER-LAST-SEEN-MAIN-TS"
 AUDIT_QUEUE="$CONTROL/AUDIT-QUEUE.md"
+LOCK_FILE="$CONTROL/DISPATCHER-RUNNING.lock"
 CLAUDE="$CLAUDE_BIN"
 CHANNEL="$DISPATCHER_CHANNEL"
 USER_ID="$FLORIAN_USER"
@@ -203,13 +204,19 @@ else
     echo "$TRIGGER_TS" > "$LAST_SEEN_FILE"
 fi
 
+# Lock setzen — verhindert parallele Dispatcher-Läufe
+echo $$ > "$LOCK_FILE"
+trap 'rm -f "$LOCK_FILE"' EXIT
+
 # Dispatcher ausführen
 if [ -n "$TRIGGER_TS" ]; then
     slack_react "eyes" "$TRIGGER_TS"
     log "Starte Dispatcher-Runde für Slack-Nachricht $TRIGGER_TS..."
 fi
+
+log "Claude startet (PID $$)..."
 "$CLAUDE" --print \
-    --permission-mode acceptEdits \
+    --permission-mode bypassPermissions \
     "Du bist der BrainVault Dispatcher. Führe genau eine Runde aus:
 1. Lies #dispatcher (Kanal-ID: C0B9L30KVR6) - die letzten 20 Nachrichten.
 2. Hauptkanal: Verarbeite NUR Nachrichten von User-ID $USER_ID ohne ✅-Reaktion und ohne bot_id.
@@ -224,6 +231,7 @@ fi
 11. Wenn weder neue Nachrichten noch offene Audit-Einträge vorhanden sind: tue nichts, gib keine Ausgabe.
 Vault-Pfad: $VAULT" \
     --add-dir "$VAULT" \
-    2>> "$LOG"
+    >> "$LOG" 2>&1
+CLAUDE_EXIT=$?
 
-log "Dispatcher-Runde abgeschlossen."
+log "Dispatcher-Runde abgeschlossen (Claude exit: $CLAUDE_EXIT)."
