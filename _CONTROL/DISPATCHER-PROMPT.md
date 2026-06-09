@@ -124,8 +124,12 @@ audit:
 ### Audit-Ablauf
 
 1. Trage die Datei in `_CONTROL/AUDIT-QUEUE.md` unter `Offen` ein.
-2. Starte den Subagenten `brainvault-auditor` mit Datei-Pfad, Auftrag und
-   relevanten Quellenhinweisen. Gib den Audit-Modus explizit mit.
+2. Starte den Subagenten `brainvault-auditor` mit `run_in_background: true`,
+   Datei-Pfad, Auftrag und relevanten Quellenhinweisen. Gib den Audit-Modus
+   explizit mit. Mache danach sofort mit der nächsten Kanal-Nachricht weiter —
+   der Auditor läuft parallel. Der Auditor schreibt nur in die Note selbst
+   (Frontmatter); LOG.md, TASKS.md und AUDIT-QUEUE.md werden ausschließlich
+   vom Dispatcher nach Rückmeldung des Subagenten aktualisiert.
 3. Der Auditor vergibt 0-100 Punkte. Freigabe nur bei Erreichen der Modus-Schwelle
    (`quick >= 85`, `standard >= 92`, `strict >= 97`).
 4. Bei `approved`: aktualisiere die Note auf `audit.status: approved`, verschiebe
