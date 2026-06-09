@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>HOME</key>
+		<string>/Users/vpn-flodido</string>
+		<key>PATH</key>
+		<string>/Users/vpn-flodido/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+	</dict>
+	<key>Label</key>
+	<string>com.brainvault.dispatcher</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>/Users/vpn-flodido/BrainVault/_CONTROL/dispatcher.sh</string>
+	</array>
+	<key>RunAtLoad</key>
+	<false/>
+	<key>StandardErrorPath</key>
+	<string>/Users/vpn-flodido/BrainVault/_CONTROL/DISPATCHER-RUN.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/vpn-flodido/BrainVault/_CONTROL/DISPATCHER-RUN.log</string>
+	<key>StartInterval</key>
+	<integer>1800</integer>
+</dict>
+</plist>
