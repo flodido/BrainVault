@@ -11,6 +11,9 @@
 
 <!-- Format: - [ ] Datei: Pfad | Modus: quick/standard/strict | Auftrag: Kurzbeschreibung | Agent: SESSION-X/DISPATCHER | Eingetragen: YYYY-MM-DD HH:MM -->
 
+<!-- Sammelauftrag Konzerne-Verzeichnis und Artikel-Revalidierung vom 2026-06-08 abgearbeitet — siehe Freigegeben -->
+
+
 ---
 
 ## Nacharbeit
@@ -24,3 +27,17 @@
 <!-- Format: - [x] Datei: Pfad | Modus: quick/standard/strict | Score: NN/100 | Auditor: brainvault-auditor | Datum: YYYY-MM-DD -->
 
 - [x] Datei: Research/Tech/Artikel-Entwurf-KI-Agenten-QA-Konzernpraxis.md | Modus: strict | Score: 98/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/Amazon-KI-Agenten-Org-Test.md | Modus: standard | Score: 98/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/Anthropic-KI-Agenten-Org-Test.md | Modus: standard | Score: 98/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/Google-KI-Agenten-Org-Test.md | Modus: standard | Score: 95/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/Meta-KI-Agenten-Org-Test.md | Modus: standard | Score: 97/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/Microsoft-KI-Agenten-Org-Test.md | Modus: standard | Score: 97/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/Netflix-KI-Agenten-Org-Test.md | Modus: standard | Score: 96/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/OpenAI-KI-Agenten-Org-Test.md | Modus: standard | Score: 98/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/Salesforce-KI-Agenten-Org-Test.md | Modus: standard | Score: 94/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/ServiceNow-KI-Agenten-Org-Test.md | Modus: standard | Score: 95/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/Uber-KI-Agenten-Org-Test.md | Modus: standard | Score: 94/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/Konzerne/Konzerne-Uebersicht-KI-Agenten-Versionierung.md | Modus: standard | Score: 95/100 | Auditor: brainvault-auditor | Datum: 2026-06-08
+- [x] Datei: Research/Tech/MIA-Chatbot-DSGVO-Analyse.md | Modus: strict | Score: 97/100 | Auditor: brainvault-auditor | Datum: 2026-06-09
+- [x] Datei: Research/Tech/Mail-Assistent-Claude-Slack-DSGVO-Kosten-Analyse.md | Modus: strict | Score: 97/100 | Auditor: brainvault-auditor | Datum: 2026-06-09
+- [x] Datei: Research/Tech/MIA-Mail-Assistent-DSGVO-Synergien.md | Modus: strict | Score: 97/100 | Auditor: brainvault-auditor | Datum: 2026-06-09
