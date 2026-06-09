@@ -50,7 +50,13 @@ BrainVault/
 │   ├── DISPATCHER-PROMPT.md
 │   ├── AUDITOR-PROMPT.md
 │   ├── AUDIT-QUEUE.md
-│   └── SESSION-PROMPTS.md
+│   ├── SESSION-PROMPTS.md
+│   ├── dispatcher.sh                              ← Dispatcher (alle 30 Min Fallback)
+│   ├── slack-webhook-listener.py                  ← Webhook-Listener (permanent, KeepAlive)
+│   ├── start-slack-listener.sh                    ← Wrapper: lädt config.sh + startet Listener
+│   ├── com.brainvault.slack-listener.plist.template  ← LaunchAgent-Vorlage
+│   ├── config.sh                                  ← Lokale IDs/Pfade (gitignoriert)
+│   └── config.example.sh                          ← Vorlage für config.sh
 ├── _INBOX/                 ← Rohdaten, noch nicht verarbeitet
 ├── _ARCHIVE/               ← Erledigte Aufgaben
 ├── Research/
@@ -198,6 +204,66 @@ claude
 /rc
 # QR Code mit Claude iPhone App scannen
 ```
+
+### 8. Slack Webhook einrichten (Event-basierter Dispatcher)
+
+Statt alle 5 Minuten zu pollen reagiert der Dispatcher jetzt in Sekunden auf neue Slack-Nachrichten.
+Der Listener läuft permanent als macOS LaunchAgent (`KeepAlive: true`) und routet eingehende
+Webhook-Events je nach Kanal an den richtigen Prozess.
+
+**Architektur:**
+```
+Slack-Nachricht
+  → HTTPS-Webhook (Tailscale Funnel, öffentliche URL)
+  → slack-webhook-listener.py (Port 9877, KeepAlive LaunchAgent)
+  → je nach Kanal:
+      #dispatcher  →  dispatcher.sh
+      #mailpilot   →  email_assistant.py --once
+```
+
+**Voraussetzungen:**
+- [Tailscale](https://tailscale.com) installiert und eingeloggt
+- Slack App mit Bot Token (siehe Schritt 3)
+- `SLACK_SIGNING_SECRET` in `~/.zshrc` gesetzt (aus *api.slack.com → Basic Information*)
+
+**Einrichtung:**
+
+1. **config.sh befüllen** (Kanal-IDs aus deinem Slack Workspace):
+   ```bash
+   cp _CONTROL/config.example.sh _CONTROL/config.sh
+   # Kanal-IDs und Pfade in config.sh eintragen
+   ```
+
+2. **Signing Secret setzen:**
+   ```bash
+   echo 'export SLACK_SIGNING_SECRET="dein-secret"' >> ~/.zshrc
+   source ~/.zshrc
+   ```
+
+3. **LaunchAgent installieren:**
+   ```bash
+   # Template kopieren und USERNAME ersetzen
+   sed 's/USERNAME/dein-macos-username/g' \
+     _CONTROL/com.brainvault.slack-listener.plist.template \
+     > ~/Library/LaunchAgents/com.brainvault.slack-listener.plist
+
+   launchctl load ~/Library/LaunchAgents/com.brainvault.slack-listener.plist
+   ```
+
+4. **Tailscale Funnel aktivieren:**
+   ```bash
+   tailscale funnel --bg 9877
+   # → Öffentliche URL: https://<hostname>.<tailnet>.ts.net
+   ```
+   Falls Funnel noch nicht freigeschaltet ist, zeigt der Befehl einen Aktivierungslink.
+
+5. **Slack App konfigurieren** unter *api.slack.com → Event Subscriptions*:
+   - Request URL: `https://<hostname>.<tailnet>.ts.net/slack/events`
+   - Bot Events abonnieren: `message.groups` (für private Kanäle)
+   - Änderungen speichern
+
+**Fallback:** Der Dispatcher-LaunchAgent (`com.brainvault.dispatcher`) läuft weiterhin alle 30 Minuten
+als Sicherheitsnetz, falls der Webhook kurzzeitig nicht erreichbar ist.
 
 ---
 
