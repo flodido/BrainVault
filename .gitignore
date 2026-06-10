@@ -1,6 +1,7 @@
 .DS_Store
 *.DS_Store
 .sync-conflict-*
+*.sync-conflict-*
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 .obsidian/cache
@@ -23,7 +24,7 @@ Neuer Link.md
 _CONTROL/config.sh
 
 # Logs und Run-Protokolle — nur leeres Template tracken
-_CONTROL/DISPATCHER-RUN.log
+_CONTROL/*.log
 _CONTROL/DISPATCHER-LAST-SEEN-MAIN-TS
 __pycache__/
 *.pyc

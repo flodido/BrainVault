@@ -11,6 +11,7 @@ import http.server
 import json
 import logging
 import os
+import signal
 import subprocess
 import time
 
@@ -20,7 +21,8 @@ DISPATCHER_CHANNEL = os.environ.get("DISPATCHER_CHANNEL", "")
 BLOG_CHANNEL       = os.environ.get("BLOG_CHANNEL", "")
 MAILPILOT_CHANNEL  = os.environ.get("MAILPILOT_CHANNEL", "")
 MAILPILOT_DIR      = os.environ.get("MAILPILOT_DIR", "")
-LOCK_FILE          = os.path.join(HOME, "BrainVault/_CONTROL/DISPATCHER-RUNNING.lock")
+LOCK_FILE_DISPATCHER = os.path.join(HOME, "BrainVault/_CONTROL/DISPATCHER-RUNNING.lock")
+LOCK_FILE_BLOG       = os.path.join(HOME, "BrainVault/_CONTROL/DISPATCHER-BLOG-RUNNING.lock")
 LOG_FILE           = os.path.join(HOME, "BrainVault/_CONTROL/slack-listener.log")
 
 _DISPATCHER_SH = ["/bin/bash", os.path.join(HOME, "BrainVault/_CONTROL/dispatcher.sh")]
@@ -66,13 +68,13 @@ def verify_slack_signature(body: bytes, headers) -> bool:
     return hmac.compare_digest(expected, sig)
 
 
-def dispatcher_already_running() -> bool:
-    if not os.path.exists(LOCK_FILE):
+def is_lock_active(lock_file: str) -> bool:
+    if not os.path.exists(lock_file):
         return False
     try:
-        age = time.time() - os.path.getmtime(LOCK_FILE)
+        age = time.time() - os.path.getmtime(lock_file)
         if age > 600:
-            os.remove(LOCK_FILE)
+            os.remove(lock_file)
             return False
         return True
     except OSError:
@@ -80,8 +82,11 @@ def dispatcher_already_running() -> bool:
 
 
 def trigger(name: str, cmd: list[str]):
-    if name in ("dispatcher", "dispatcher-blog") and dispatcher_already_running():
+    if name == "dispatcher" and is_lock_active(LOCK_FILE_DISPATCHER):
         logging.info("Dispatcher läuft bereits — Skip")
+        return
+    if name == "dispatcher-blog" and is_lock_active(LOCK_FILE_BLOG):
+        logging.info("Dispatcher-Blog läuft bereits — Skip")
         return
     logging.info(f"Starte {name} im Hintergrund")
     subprocess.Popen(
@@ -146,7 +151,22 @@ class SlackHandler(http.server.BaseHTTPRequestHandler):
         logging.info(fmt % args)
 
 
+class BrainVaultHTTPServer(http.server.HTTPServer):
+    allow_reuse_address = True
+
+
 if __name__ == "__main__":
+    def _shutdown(signum, frame):
+        logging.info(f"Signal {signum} empfangen — Listener beendet sich.")
+        raise SystemExit(0)
+
+    signal.signal(signal.SIGTERM, _shutdown)
+    signal.signal(signal.SIGINT, _shutdown)
+
     logging.info(f"Slack Webhook Listener gestartet auf Port {PORT}")
-    server = http.server.HTTPServer(("127.0.0.1", PORT), SlackHandler)
-    server.serve_forever()
+    try:
+        server = BrainVaultHTTPServer(("127.0.0.1", PORT), SlackHandler)
+        server.serve_forever()
+    except Exception as e:
+        logging.error(f"Listener abgestürzt: {e}", exc_info=True)
+        raise

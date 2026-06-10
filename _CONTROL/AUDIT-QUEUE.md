@@ -13,7 +13,6 @@
 
 <!-- Sammelauftrag Konzerne-Verzeichnis und Artikel-Revalidierung vom 2026-06-08 abgearbeitet — siehe Freigegeben -->
 
-
 ---
 
 ## Nacharbeit
@@ -41,3 +40,9 @@
 - [x] Datei: Research/Tech/MIA-Chatbot-DSGVO-Analyse.md | Modus: strict | Score: 97/100 | Auditor: brainvault-auditor | Datum: 2026-06-09
 - [x] Datei: Research/Tech/Mail-Assistent-Claude-Slack-DSGVO-Kosten-Analyse.md | Modus: strict | Score: 97/100 | Auditor: brainvault-auditor | Datum: 2026-06-09
 - [x] Datei: Research/Tech/MIA-Mail-Assistent-DSGVO-Synergien.md | Modus: strict | Score: 97/100 | Auditor: brainvault-auditor | Datum: 2026-06-09
+- [x] Datei: Research/Tech/Artikel-Entwurf-KI-Testfall-Generierung.md | Modus: quick | Score: 90/100 | Auditor: brainvault-auditor | Datum: 2026-06-09
+- [x] Datei: Research/Tech/Artikel-Entwurf-KI-Testfall-Generierung.md | Modus: strict | Score: 97/100 | Auditor: brainvault-auditor | Datum: 2026-06-09
+- [x] Datei: Research/Tech/Artikel-Entwurf-KI-Testing-Risiken-Mensch.md | Modus: quick | Score: 85/100 | Auditor: brainvault-auditor | Datum: 2026-06-09
+- [x] Datei: Research/Sonstiges/ePA-Kinder-Datenschutz-Widerspruch-Analyse.md | Modus: strict | Score: 100/100 | Auditor: brainvault-auditor | Datum: 2026-06-10
+- [x] Datei: Research/Tech/Artikel-Entwurf-KI-Testing-Risiken-Mensch.md | Modus: strict | Score: 98/100 | Auditor: brainvault-auditor | Datum: 2026-06-10 (3 Runden: 58 → 90 → 98; #blog-Workflow, Deployment-Freigabe durch Florian ausstehend)
+- [x] Datei: Research/Sonstiges/ePA-Kinder-Datenschutz-Widerspruch-Analyse.md | Modus: strict | Score: 98/100 | Auditor: brainvault-auditor | Datum: 2026-06-10 (Re-Audit der Vertiefung Abschnitt 3a — Kategorisierungsrisiko/künftige Nutzung gegen Versicherte, Fußnoten 15–21; Folgefrage Florian)
