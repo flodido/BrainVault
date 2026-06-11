@@ -1,7 +1,9 @@
 ---
 tags: [präsentation, meeting, ki-testing, qa, testautomatisierung]
+status: approved
 erstellt: 2026-06-11
 kontext: "Internes Meeting-Handout — neutrale Aufbereitung, kein Unternehmensbezug"
+bezuege: "[[Artikel-Entwurf-KI-Testing-Risiken-Mensch]] — Basis-Artikel"
 audit:
   status: approved
   auditor: brainvault-auditor

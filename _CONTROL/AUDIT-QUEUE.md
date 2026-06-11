@@ -46,3 +46,4 @@
 - [x] Datei: Research/Sonstiges/ePA-Kinder-Datenschutz-Widerspruch-Analyse.md | Modus: strict | Score: 100/100 | Auditor: brainvault-auditor | Datum: 2026-06-10
 - [x] Datei: Research/Tech/Artikel-Entwurf-KI-Testing-Risiken-Mensch.md | Modus: strict | Score: 98/100 | Auditor: brainvault-auditor | Datum: 2026-06-10 (3 Runden: 58 → 90 → 98; #blog-Workflow, Deployment-Freigabe durch Florian ausstehend)
 - [x] Datei: Research/Sonstiges/ePA-Kinder-Datenschutz-Widerspruch-Analyse.md | Modus: strict | Score: 98/100 | Auditor: brainvault-auditor | Datum: 2026-06-10 (Re-Audit der Vertiefung Abschnitt 3a — Kategorisierungsrisiko/künftige Nutzung gegen Versicherte, Fußnoten 15–21; Folgefrage Florian)
+- [x] Datei: Research/Tech/Artikel-Entwurf-KI-Recherche-Audit-Gate-Scoring.md | Modus: strict | Score: 100/100 | Auditor: brainvault-auditor | Datum: 2026-06-11
