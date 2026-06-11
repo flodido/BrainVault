@@ -2,12 +2,12 @@
 
 *Automatisch gepflegt vom Dispatcher. Manuell ergänzen: geplantes Datum in Spalte „Deploy-Datum".*
 
-| Titel | Vault-Datei | Status | Audit | Deploy-Datum | Live-URL |
-|---|---|---|---|---|---|
-| KI-Agenten in der Konzernpraxis | Artikel-Entwurf-KI-Agenten-QA-Konzernpraxis.md | ✅ deployed | strict 98/100 | 2026-06-08 | /blog/ki-agenten-qa-konzernpraxis |
-| KI-gestützte Testfall-Generierung | Artikel-Entwurf-KI-Testfall-Generierung.md | ✅ deployed | strict — | 2026-06-09 | /blog/ki-testfall-generierung |
-| Grüne Balken, trügerische Sicherheit | Artikel-Entwurf-KI-Testing-Risiken-Mensch.md | ✅ deployed | strict 98/100 | 2026-06-11 | /blog/ki-testing-risiken-faktor-mensch |
-| Kein Vertrauen ohne Abnahme | Artikel-Entwurf-KI-Recherche-Audit-Gate-Scoring.md | 🟡 bereit | strict 98/100 | — | — |
+| ID | Titel | Vault-Datei | Status | Audit | Deploy-Datum | Live-URL |
+|---|---|---|---|---|---|---|
+| A1 | KI-Agenten in der Konzernpraxis | Artikel-Entwurf-KI-Agenten-QA-Konzernpraxis.md | ✅ deployed | strict 98/100 | 2026-06-08 | /blog/ki-agenten-qa-konzernpraxis |
+| A2 | KI-gestützte Testfall-Generierung | Artikel-Entwurf-KI-Testfall-Generierung.md | ✅ deployed | strict — | 2026-06-09 | /blog/ki-testfall-generierung |
+| A3 | Grüne Balken, trügerische Sicherheit | Artikel-Entwurf-KI-Testing-Risiken-Mensch.md | ✅ deployed | strict 98/100 | 2026-06-11 | /blog/ki-testing-risiken-faktor-mensch |
+| A4 | Kein Vertrauen ohne Abnahme | Artikel-Entwurf-KI-Recherche-Audit-Gate-Scoring.md | 🟡 bereit | strict 98/100 | — | — |
 
 ---
 
