@@ -77,6 +77,7 @@ Wenn ein Task zu komplex für direkte Ausführung ist, delegiere an einen Subage
 | Code- oder Repo-Analyse | `Explore` |
 | Planung / Architektur-Entscheidung | `Plan` |
 | Inhaltsaudit / Quellenprüfung | `brainvault-auditor` |
+| Semantik-Check (zwischen quick- und strict-Audit) | `brainvault-semantik-check` |
 
 Ergebnis des Subagenten immer selbst ins Vault schreiben + im Thread berichten.
 
