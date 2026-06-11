@@ -131,10 +131,14 @@ class SlackHandler(http.server.BaseHTTPRequestHandler):
         event = payload.get("event", {})
         if event.get("type") == "message" and not event.get("bot_id"):
             channel = event.get("channel", "")
+            msg_ts  = event.get("ts", "")
             routes  = build_channel_routes()
             route   = routes.get(channel)
             if route:
-                trigger(*route)
+                name, cmd = route
+                if name == "dispatcher-blog" and msg_ts:
+                    cmd = cmd + ["--ts", msg_ts]
+                trigger(name, cmd)
             else:
                 logging.info(f"Unbekannter Kanal {channel} — ignoriert")
 

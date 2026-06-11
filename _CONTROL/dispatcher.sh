@@ -9,7 +9,14 @@ STOP_FILE="$CONTROL/DISPATCHER-STOP"
 LAST_SEEN_FILE="$CONTROL/DISPATCHER-LAST-SEEN-MAIN-TS"
 AUDIT_QUEUE="$CONTROL/AUDIT-QUEUE.md"
 IS_BLOG=0
-[[ "${1:-}" == "--blog" ]] && IS_BLOG=1
+WEBHOOK_TS=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --blog) IS_BLOG=1; shift ;;
+        --ts)   WEBHOOK_TS="${2:-}"; shift 2 ;;
+        *)      shift ;;
+    esac
+done
 CLAUDE="$CLAUDE_BIN"
 CHANNEL="$DISPATCHER_CHANNEL"
 USER_ID="$FLORIAN_USER"
@@ -87,10 +94,15 @@ if [ -f "$STOP_FILE" ]; then
 fi
 
 if [ "$IS_BLOG" = "1" ]; then
-    TRIGGER_TS=$(curl -s \
-        -H "Authorization: Bearer $TOKEN" \
-        "https://slack.com/api/conversations.history?channel=$BLOG_CHANNEL&limit=10" | \
-        python3 -c "
+    if [ -n "$WEBHOOK_TS" ]; then
+        # ts direkt aus dem Webhook-Payload — funktioniert auch für Thread-Replies
+        TRIGGER_TS="$WEBHOOK_TS"
+    else
+        # Fallback: neueste offene Top-Level-Nachricht per API holen
+        TRIGGER_TS=$(curl -s \
+            -H "Authorization: Bearer $TOKEN" \
+            "https://slack.com/api/conversations.history?channel=$BLOG_CHANNEL&limit=10" | \
+            python3 -c "
 import sys, json
 from decimal import Decimal
 d = json.load(sys.stdin)
@@ -100,6 +112,7 @@ msgs = [m for m in d.get('messages', [])
         and not any(r.get('name') in ('white_check_mark','heavy_check_mark') for r in m.get('reactions', []))]
 print(max(msgs, key=lambda m: Decimal(m['ts']))['ts'] if msgs else '')
 " 2>/dev/null)
+    fi
     if [ -n "$TRIGGER_TS" ]; then
         slack_react "eyes" "$TRIGGER_TS" "$BLOG_CHANNEL"
     fi
