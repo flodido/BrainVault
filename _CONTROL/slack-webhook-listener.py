@@ -13,6 +13,7 @@ import logging
 import os
 import signal
 import subprocess
+import threading
 import time
 
 PORT = 9877
@@ -79,6 +80,21 @@ def is_lock_active(lock_file: str) -> bool:
         return True
     except OSError:
         return False
+
+
+def startup_scan():
+    """Nach Neustart Dispatcher für alle Kanäle triggern — fängt verpasste Nachrichten auf."""
+    time.sleep(5)  # kurz warten bis HTTP-Server sicher oben ist
+    logging.info("Startup-Scan: prüfe auf verpasste Nachrichten nach Neustart")
+    routes = build_channel_routes()
+    if not routes:
+        logging.warning("Startup-Scan: keine Kanäle konfiguriert — abgebrochen")
+        return
+    for channel, (name, cmd) in routes.items():
+        if name == "mailpilot":
+            continue  # Mailpilot hat eigenen Poll-Mechanismus
+        logging.info(f"Startup-Scan: triggere {name}")
+        trigger(name, cmd)
 
 
 def trigger(name: str, cmd: list[str]):
@@ -168,8 +184,9 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, _shutdown)
 
     logging.info(f"Slack Webhook Listener gestartet auf Port {PORT}")
+    threading.Thread(target=startup_scan, daemon=True).start()
     try:
-        server = BrainVaultHTTPServer(("127.0.0.1", PORT), SlackHandler)
+        server = BrainVaultHTTPServer(("0.0.0.0", PORT), SlackHandler)
         server.serve_forever()
     except Exception as e:
         logging.error(f"Listener abgestürzt: {e}", exc_info=True)
