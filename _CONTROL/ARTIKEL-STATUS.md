@@ -4,10 +4,10 @@
 
 | ID | Titel | Vault-Datei | Status | Audit | Deploy-Datum | Live-URL |
 |---|---|---|---|---|---|---|
-| A1 | KI-Agenten in der Konzernpraxis | Artikel-Entwurf-KI-Agenten-QA-Konzernpraxis.md | ✅ deployed | strict 98/100 | 2026-06-08 | /blog/ki-agenten-qa-konzernpraxis |
-| A2 | KI-gestützte Testfall-Generierung | Artikel-Entwurf-KI-Testfall-Generierung.md | ✅ deployed | strict — | 2026-06-09 | /blog/ki-testfall-generierung |
-| A3 | Grüne Balken, trügerische Sicherheit | Artikel-Entwurf-KI-Testing-Risiken-Mensch.md | ✅ deployed | strict 98/100 | 2026-06-11 | /blog/ki-testing-risiken-faktor-mensch |
-| A4 | Kein Vertrauen ohne Abnahme | Artikel-Entwurf-KI-Recherche-Audit-Gate-Scoring.md | 🟡 bereit | strict 98/100 | — | — |
+| A01 | KI-Agenten in der Konzernpraxis | Research/Tech/Artikel/A01-Artikel-Entwurf-KI-Agenten-QA-Konzernpraxis.md | ✅ deployed | strict 98/100 | 2026-06-08 | /blog/ki-agenten-qa-konzernpraxis |
+| A02 | KI-gestützte Testfall-Generierung | Research/Tech/Artikel/A02-Artikel-Entwurf-KI-Testfall-Generierung.md | ✅ deployed | strict — | 2026-06-09 | /blog/ki-testfall-generierung |
+| A03 | Grüne Balken, trügerische Sicherheit | Research/Tech/Artikel/A03-Artikel-Entwurf-KI-Testing-Risiken-Mensch.md | ✅ deployed | strict 98/100 | 2026-06-11 | /blog/ki-testing-risiken-faktor-mensch |
+| A04 | Kein Vertrauen ohne Abnahme | Research/Tech/Artikel/A04-Artikel-Entwurf-KI-Recherche-Audit-Gate-Scoring.md | 🟡 bereit | strict 100/100 | — | — |
 
 ---
 
@@ -22,4 +22,4 @@
 
 ---
 
-*Letzte Aktualisierung: 2026-06-11*
+*Letzte Aktualisierung: 2026-06-12*
